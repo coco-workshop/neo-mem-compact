@@ -1,0 +1,13 @@
+** Drc report for hardware/dat/neo-mem-2048k-dat.kicad_pcb **
+** Created on 2026-11-14 22:17:08 **
+
+** Found 1 DRC violations **
+[lib_footprint_mismatch]: Footprint 'DIP-40_W15.24mm' does not match copy in library 'Package_DIP'.
+    Local override; Severity: warning
+    @(100.0000 mm, 60.0000 mm): Footprint J1
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

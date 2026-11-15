@@ -1,0 +1,26 @@
+# KiCad
+*.kicad_prl
+*-backups/
+fp-info-cache
+_autosave-*
+*.bak
+*.lck
+~*.lck
+
+# routing scratch
+route_work/
+*.dsn
+*.ses
+
+# Python
+__pycache__/
+
+# CPLD build intermediates (dat2m_top.jed and .fit are kept)
+cpld/*.edif
+cpld/*.io
+cpld/*.pin
+cpld/*.tt3
+cpld/*.vo
+cpld/*.log
+cpld/postfit.v
+cpld/*.vvp

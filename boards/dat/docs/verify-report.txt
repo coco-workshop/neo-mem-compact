@@ -1,0 +1,18 @@
+PASS J1 taps the right 6809E pins (A0-A15, D0/D1/D3/D6/D7, R/W, E, Q, /RESET, power)
+PASS unused CPU pins (interrupts, BA/BS, D2/D4/D5, BUSY, AVMA, LIC, TSC, HALT) untouched
+PASS CPLD power pins
+PASS E on GCLK1 (pin 37), the global clock
+PASS /RESET on GCLR (pin 39), the global clear
+PASS JTAG pins 1/7/26/32 = TDI/TMS/TCK/TDO
+PASS J3 follows the 10-pin Atmel ATDH1150USB / USB-Blaster layout
+PASS J2 = BANK0, BANK1, GND (matches memory board J3)
+PASS JP1: EN2M on the common pad, +5V (2MB, bridged as made) and GND (512K) either side
+PASS JP1 is the pre-bridged 1-2 type, on the back (no assembly)
+PASS all 28 CPLD pin constraints in dat2m_top.v match the PCB
+PASS CPLD drives only BANK0/BANK1 - never the CPU bus
+PASS no logic signal on a JTAG pin
+PASS one 100 nF cap per CPLD VCC pin
+PASS schematic netlist matches PCB pad-for-pad (108 pads)
+     board 19.7 x 77.2 mm
+
+ALL CHECKS PASSED

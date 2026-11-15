@@ -1,0 +1,8 @@
+[["CY62167ELL-45ZXI 1Mx16 SRAM (5V)", "U1", "TSOP-I-48_18.4x12mm_P0.5mm", "C2950509"],
+ ["SN74AHCT86PWR quad XOR (alt: 74AHCT86PW C554719)", "U2", "TSSOP-14_4.4x5mm_P0.65mm", "C471866"],
+ ["74VHCT574AFT(BE) octal D flip-flop (alt: 74AHCT574PW C282328)", "U3,U4", "TSSOP-20_4.4x6.5mm_P0.65mm", "C7421311"],
+ ["100nF 16V X7R 0402", "C1,C2,C3,C4", "C_0402_1005Metric", "C1525"],
+ ["10k 1% 0402", "R1,R2", "R_0402_1005Metric", "C25744"],
+ ["1x24 2.54mm pin header", "J1", "PinHeader_1x24", "THT"],
+ ["1x12 2.54mm pin header", "J2", "PinHeader_1x12", "THT"],
+ ["1x3 2.54mm pin header", "J3", "PinHeader_1x03", "THT"]]

@@ -1,0 +1,32 @@
+PASS J1 matches CN6/CN5 traced pinout
+PASS J2 matches CN4 traced pinout
+PASS J3 = BANK0, BANK1, GND (matches DAT board J2)
+PASS R1/R2 pull BANK0/BANK1 low (no DAT board = bank 0 = 512K)
+PASS U2 power pins
+PASS ~WE0=1 ~WE1=1 -> SRAM ~WE,~BLE,~BHE = (1, 0, 0) (read)
+PASS ~WE0=0 ~WE1=1 -> SRAM ~WE,~BLE,~BHE = (0, 0, 1) (write low)
+PASS ~WE0=1 ~WE1=0 -> SRAM ~WE,~BLE,~BHE = (0, 1, 0) (write high)
+PASS ~WE0=0 ~WE1=0 -> SRAM ~WE,~BLE,~BHE = (1, 1, 1) (invalid)
+PASS U3/U4 CLK = NOT ~RAS (~RAS=0)
+PASS U3/U4 CLK = NOT ~RAS (~RAS=1)
+PASS SRAM ~CE1 driven by ~CAS
+PASS SRAM CE2 high, BYTE high (x16 mode)
+PASS SRAM ~OE tied low
+PASS SRAM power
+PASS SRAM NC pins 10, 13 unconnected
+PASS IO0-7 (~BLE lane) carry D0-D7 (bank 0, ~WE0)
+PASS IO8-15 (~BHE lane) carry D8-D15 (bank 1, ~WE1)
+PASS all 20 SRAM address pins used, each a different net
+PASS column address: Z0-Z8 each wired directly to exactly one SRAM address pin
+PASS row address Z0-Z8 and BANK0/BANK1 each latched once into a unique SRAM address pin
+PASS U3 clocked by RAS (U2 pin 11), outputs always enabled
+PASS U3 power pins
+PASS U3 unused inputs tied to GND
+PASS U4 clocked by RAS (U2 pin 11), outputs always enabled
+PASS U4 power pins
+PASS U4 unused inputs tied to GND
+PASS 4 decoupling caps across +5V/GND
+PASS schematic netlist matches PCB pad-for-pad (153 pads)
+PASS outline inside the proven cc3-512k envelope (2034 mm2)
+
+ALL CHECKS PASSED

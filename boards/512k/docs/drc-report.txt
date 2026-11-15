@@ -1,0 +1,43 @@
+** Drc report for neo-mem-512k-compact/hardware/neo-mem-512k-compact.kicad_pcb **
+** Created on 2026-11-14 23:02:51 **
+
+** Found 11 DRC violations **
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(100.4500 mm, 105.5000 mm): Footprint C1
+[lib_footprint_issues]: Footprint 'TSOP-II-44_10.16x18.41mm_P0.8mm' not found in library 'Package_SO'.
+    Local override; Severity: warning
+    @(108.0000 mm, 105.5000 mm): Footprint U1
+[lib_footprint_issues]: Footprint 'TSSOP-20_4.4x6.5mm_P0.65mm' not found in library 'Package_SO'.
+    Local override; Severity: warning
+    @(112.3000 mm, 123.0000 mm): Footprint U4
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(114.2000 mm, 86.5000 mm): Footprint C3
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(101.9750 mm, 118.5875 mm): Footprint C4
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(115.6000 mm, 105.5000 mm): Footprint C2
+[lib_footprint_issues]: Footprint 'TSSOP-20_4.4x6.5mm_P0.65mm' not found in library 'Package_SO'.
+    Local override; Severity: warning
+    @(104.9000 mm, 123.0000 mm): Footprint U3
+[lib_footprint_issues]: Footprint 'TSSOP-14_4.4x5mm_P0.65mm' not found in library 'Package_SO'.
+    Local override; Severity: warning
+    @(109.0000 mm, 88.0000 mm): Footprint U2
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(109.3750 mm, 118.5875 mm): Footprint C5
+[lib_footprint_issues]: Footprint 'PinHeader_1x24_P2.54mm_Vertical' not found in library 'Connector_PinHeader_2.54mm'.
+    Local override; Severity: warning
+    @(98.2980 mm, 70.6120 mm): Footprint J1
+[lib_footprint_issues]: Footprint 'PinHeader_1x12_P2.54mm_Vertical' not found in library 'Connector_PinHeader_2.54mm'.
+    Local override; Severity: warning
+    @(138.9380 mm, 134.1120 mm): Footprint J2
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

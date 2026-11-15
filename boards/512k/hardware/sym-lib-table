@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "cc3")(type "KiCad")(uri "${KIPRJMOD}/cc3.kicad_sym")(options "")(descr "CoCo 3 512K symbols"))
+)
