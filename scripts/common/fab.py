@@ -49,9 +49,8 @@ def main(hw, name, fab, docs, bomfile):
     x = 0
     for i in imgs:
         c.paste(i, (x, 0)); x += i.width + 40
-    short = name.split('-')[-1]
-    c.save(os.path.join(docs, short + '-preview.png'))
-    run('kicad-cli', 'sch', 'export', 'pdf', '-o', os.path.join(docs, short + '-schematic.pdf'), sch)
+    c.save(os.path.join(docs, 'preview.png'))
+    run('kicad-cli', 'sch', 'export', 'pdf', '-o', os.path.join(docs, 'schematic.pdf'), sch)
     print('fab done for', name)
 
 

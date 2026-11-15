@@ -16,11 +16,11 @@ route_work/
 __pycache__/
 
 # CPLD build intermediates (dat2m_top.jed and .fit are kept)
-cpld/*.edif
-cpld/*.io
-cpld/*.pin
-cpld/*.tt3
-cpld/*.vo
-cpld/*.log
-cpld/postfit.v
-cpld/*.vvp
+boards/dat/cpld/*.edif
+boards/dat/cpld/*.io
+boards/dat/cpld/*.pin
+boards/dat/cpld/*.tt3
+boards/dat/cpld/*.vo
+boards/dat/cpld/*.log
+boards/dat/cpld/postfit.v
+boards/dat/cpld/*.vvp

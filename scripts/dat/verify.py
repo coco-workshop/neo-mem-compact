@@ -44,7 +44,7 @@ check(jp.GetLayer() == pcbnew.B_Cu and 'Bridged12' in jp.GetFPIDAsString(), 'JP1
 v = open(TOP).read()
 dirs = dict((n, d) for d, n in re.findall(r'^\s+(input|output)\s+wire\s+(\w+)', v, re.M))
 locs = [(p, dirs.get(s), s) for s, p in re.findall(r'^//PIN:\s+(\w+)\s*:\s*(\d+)', v, re.M)]
-alias = {'RW': 'RW', 'RESETn': '~RESET'}
+alias = {'RW': 'RW', 'RESETn': '~RESET', 'ECLK': 'E', 'QCLK': 'Q'}
 bad = [(p, s, net[('U1', int(p))]) for p, d, s in locs if net[('U1', int(p))] != alias.get(s, s)]
 check(len(locs) == 28 and not bad, 'all 28 CPLD pin constraints in dat2m_top.v match the PCB%s' % ('' if not bad else ' %s' % bad))
 outs = [s for p, d, s in locs if d == 'output']
