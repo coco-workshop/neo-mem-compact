@@ -5,6 +5,11 @@
 > check against datasheets, and simulation of the DAT board's logic. Real hardware may
 > still show timing or fit problems these checks can't catch. Build them at your own
 > risk, order the smallest quantity you can, and treat a first batch as prototypes.
+>
+> 🚧 **DAT board: footprint not ready - do not order it yet.** Its CPLD end hangs about
+> 28 mm past the CPU's pin-20 end, which may sit over the ROM (IC2) or a ROM
+> replacement such as a OneROM. The board outline and parts placement need to change
+> before it is built. The two memory boards are not affected.
 
 Compact surface-mount RAM expansions for the Tandy Color Computer 3. They plug into
 the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
@@ -39,6 +44,10 @@ datasheet pinouts (`boards/*/docs/`). The DAT board's CPLD logic passes a cycle-
 simulation in both CPU speed modes, both as written and after fitting into the chip.
 Not yet confirmed on real hardware: memory timing on a real GIME (and on faster GIME
 replacements), the DAT board's bank timing against /RAS, and physical fit in the case.
+
+**DAT board footprint: needs changing.** The CPLD overhang past the CPU's pin-20 end
+can clash with the ROM (IC2) or a OneROM, so the outline and placement will be
+reworked. Its logic, pin assignment and schematic are expected to stay the same.
 
 ## Connectors, jumpers and features
 
@@ -169,8 +178,8 @@ through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short th
    DAT board into the CPU socket with pin 1 (square pad, marked "CPU pin 1")
    matching the socket's pin 1, then plug the CPU into the DAT board. The board is the
    CPU's width along its length; the CPLD end hangs about 28 mm past the CPU's pin-20
-   end and is about 3 mm wider on the pin-21 side (22.6 × 78.7 mm overall). **Check
-   there's room in your machine before ordering.**
+   end and is about 3 mm wider on the pin-21 side (22.6 × 78.7 mm overall). **This
+   footprint is being changed:** the overhang can sit over the ROM (IC2) or a OneROM.
 3. Link DAT **J2** to memory **J3** with a 4-wire female–female cable, kept as short
    as practical. Both headers are **G, G, B, B** (marked on the silkscreen, pin 1 =
    square pad = G): match G to G and B to B. Which B goes to which doesn't matter -
@@ -201,6 +210,8 @@ through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short th
 ## Ordering (JLCPCB)
 **These are untested prototypes** (see the warning at the top): order the minimum
 quantity, and expect that a first build may need fixes.
+
+**Don't order the DAT board yet** - its footprint is being changed (see Status).
 
 Each board has its own Gerbers, BOM and CPL file in `boards/<board>/fab/`. Upload the
 gerbers zip (2 layers, 1.6 mm), then the BOM and CPL for assembly. Check part
