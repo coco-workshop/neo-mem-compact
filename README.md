@@ -11,20 +11,20 @@ the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
 
 | Board | What it does | Main parts |
 |---|---|---|
-| [**512K**](boards/512k) | 512K upgrade on its own | CY62146ESL 256K×16 SRAM, 74AHCT86, 2× 74x574 |
-| [**2048K memory**](boards/2048k-mem) | 2 MB of RAM; works as a plain 512K board on its own | CY62167ELL 1M×16 SRAM, 74AHCT86, 2× 74x574 |
-| [**DAT**](boards/dat) | Sits under the CPU and supplies the extra address bits the 2048K board needs | ATF1504AS CPLD |
+| [**512K memory**](boards/512k) | 512K upgrade on its own | CY62146ESL 256K×16 SRAM, 74AHCT86, 2× 74x574 |
+| [**2048K memory**](boards/2048k-mem) | 2 MB of RAM; runs as 512K on its own | CY62167ELL 1M×16 SRAM, 74AHCT86, 2× 74x574 |
+| [**DAT**](boards/dat) | Sits under the CPU and supplies the extra address bits the 2048K memory board needs | ATF1504AS CPLD |
 
 **Which to build:**
-* **512K:** the 512K board. It's the cheapest option.
+* **512K:** the 512K memory board. It's the cheapest option.
 * **2 MB:** the 2048K memory board plus the DAT board, joined by a 4-wire cable
   (both headers are G, G, B, B).
   The memory board also runs alone as 512K, so you can fit it first and add the DAT
   board later.
 
-| 512K | 2048K memory | DAT |
+| 512K memory | 2048K memory | DAT |
 |---|---|---|
-| ![512K](boards/512k/docs/render.png) | ![2048K memory](boards/2048k-mem/docs/render.png) | ![DAT](boards/dat/docs/render.png) |
+| ![512K memory](boards/512k/docs/render.png) | ![2048K memory](boards/2048k-mem/docs/render.png) | ![DAT](boards/dat/docs/render.png) |
 | [layout](boards/512k/docs/preview.png) | [layout](boards/2048k-mem/docs/preview.png) | [layout](boards/dat/docs/preview.png) · [with CPU fitted](boards/dat/docs/render-cpu.png) |
 
 *3D renders of the assembled boards, made from the real PCB layers and KiCad's
@@ -40,7 +40,7 @@ replacements), the DAT board's bank timing against /RAS, and physical fit in the
 
 ## Connectors, jumpers and features
 
-### 512K board
+### 512K memory board
 | Ref | What | Use |
 |---|---|---|
 | J1 | 24-pin header, **underneath** | Plugs into CN6/CN5 (the vertical socket pair left of the RAM). Pin 1 (square pad) faces the rear ports. |
@@ -51,10 +51,10 @@ No jumpers or settings.
 ### 2048K memory board
 | Ref | What | Use |
 |---|---|---|
-| J1, J2 | Same as the 512K board | Same fitting. |
+| J1, J2 | Same as the 512K memory board | Same fitting. |
 | J3 | 1×4 header on top: **G, G, B, B** | Bank input from the DAT board (or any source using the same G, G, B, B layout). Pin 1 is the square pad, a ground. |
 
-* **J3 left open:** works as a normal 512K board (R1/R2 hold the bank lines low).
+* **J3 left open:** runs as 512K (R1/R2 hold the bank lines low).
 * **4-wire cable:** G to G, B to B. The two B wires can go either way round; swapping
   them only reorders memory.
 * **2-wire cable:** only the two B pins are needed; the motherboard provides the ground.
@@ -93,7 +93,7 @@ Both memory boards replace the CoCo 3's four DRAMs with one 16-bit SRAM.
 * The GIME multiplexes row and column addresses onto the same pins. Two '574
   flip-flops (U3/U4) latch the row address on the falling edge of /RAS, clocked
   through one XOR gate (`RAS = ~RAS XOR 1`). That gate delay centres the sampling
-  point on the row-address hold time. On the 2048K board the same flip-flops also
+  point on the row-address hold time. On the 2048K memory board the same flip-flops also
   latch the two bank bits from the DAT board.
 * Flip-flops are used rather than transparent latches ('573), so the row address
   holds after /RAS rises and can't change mid-cycle even if /CAS outlasts /RAS.
@@ -105,8 +105,8 @@ Both memory boards replace the CoCo 3's four DRAMs with one 16-bit SRAM.
   ignored, and page-mode accesses are safe.
 * SRAM address pins, and the data pins within each byte lane, are permuted to
   simplify routing. Any consistent one-to-one mapping works.
-* The 2048K board's R1/R2 pull the bank bits low, so with no DAT board connected it
-  works as an ordinary 512K board.
+* The 2048K memory board's R1/R2 pull the bank bits low, so with no DAT board connected it
+  runs as 512K.
 
 ## How the DAT board works (2 MB)
 The GIME's MMU registers are only 6 bits wide, so it can only address 512K
@@ -216,13 +216,13 @@ silkscreen triangle. Ordering all boards together shares shipping.
   1.0 mm for the 0.64 mm square tails.
 
 **Hand-solder** all through-hole parts: memory board headers J1/J2 on the
-**bottom** (J3, 1×4, on top, 2048K only), and the DAT board's J1, J2 (1×4),
+**bottom** (J3, 1×4, on top, 2048K memory board only), and the DAT board's J1, J2 (1×4),
 J3 (2×5, JTAG) and J4 (1×2, turbo LED).
 
 ## First power-up
 1. Check for shorts between +5V and GND on every board.
 2. Fit the memory board alone and run a full 512K memory test (e.g. under NitrOS-9,
-   or a RAM test program). On the 2048K board leave J3 open (bank 0).
+   or a RAM test program). On the 2048K memory board leave J3 open (bank 0).
 3. If you have a scope, check /WE0 and /WE1 against /CAS at the end of a write. The
    design assumes /CAS rises before, or together with, the write line.
 4. **2 MB:** program the CPLD, fit the DAT board, and check the machine boots as a
@@ -249,7 +249,7 @@ python3 scripts/mem/verify.py $B.kicad_pcb $B.kicad_sch
 python3 scripts/common/fab.py boards/2048k-mem/hardware neo-mem-2048k-mem \
   boards/2048k-mem/fab boards/2048k-mem/docs scripts/mem/bom.json
 ```
-The 512K and DAT boards work the same way (the DAT checker also takes
+The 512K memory and DAT boards work the same way (the DAT checker also takes
 `boards/dat/cpld/dat2m_top.v`, and `finish.py` takes `JP1` as a keepout). The fine
 pitches need the 0.15 mm default clearance set in each `.kicad_pro`. Autorouting
 isn't deterministic; the committed boards are the ones that were checked.
