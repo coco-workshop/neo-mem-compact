@@ -20,7 +20,7 @@ PLACE = {
     'U3': (104.9, 123.0, None, False),      # '574s: D side faces J2 (down), Q side faces the SRAM
     'U4': (112.3, 123.0, None, False),
     'U2': (109.0, 86.6, 0, False),
-    'J3': (121.5, 131.6, 90, False),        # BANK0, BANK1, GND -> pins run +x
+    'J3': (129.12, 131.6, -90, False),      # G, G, BANK1, BANK0 -> pin 1 at the right, pins run -x
     'R1': (121.5, 128.2, 90, False),
     'R2': (124.04, 128.2, 90, False),
     'C1': (108.25, 92.2, 90, False),
@@ -175,12 +175,12 @@ def main():
         r = fps[ref].Reference(); r.SetLayer(pcbnew.B_SilkS)
         r.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
     fps['J3'].Reference().SetLayer(pcbnew.F_Fab)
-    lab = pcbnew.PCB_TEXT(board); lab.SetText('B0 B1 G'); lab.SetLayer(pcbnew.F_SilkS)
-    lab.SetPosition(pcbnew.VECTOR2I(mm(124.04), mm(135.4)))
+    lab = pcbnew.PCB_TEXT(board); lab.SetText('B  B  G  G'); lab.SetLayer(pcbnew.F_SilkS)
+    lab.SetPosition(pcbnew.VECTOR2I(mm(125.31), mm(135.4)))
     lab.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8))); lab.SetTextThickness(mm(0.12)); board.Add(lab)
     # Silkscreen title
     t = pcbnew.PCB_TEXT(board)
-    t.SetText('neo-mem-2048k-compact\nCoCo 3 2MB SRAM v1')
+    t.SetText('neo-mem-2048k-compact\nCoCo 3 2MB SRAM v2')
     t.SetPosition(pcbnew.VECTOR2I(mm(153), mm(129.6)))
     t.SetLayer(pcbnew.F_SilkS)
     t.SetTextSize(pcbnew.VECTOR2I(mm(1.0), mm(1.0)))

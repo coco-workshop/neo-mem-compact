@@ -22,7 +22,7 @@ CN5 = ['GND', 'D2', 'D3', 'D1', '~WE0', 'D0', '~CAS', 'D7', 'D5', 'D4', 'D6', 'G
 CN4 = ['GND', '~RAS', 'Z0', 'Z1', 'Z2', 'Z3', 'Z6', 'Z5', 'Z4', 'Z7', 'Z8', 'GND']
 check([net[('J1', i)] for i in range(1, 25)] == CN6 + CN5, 'J1 matches CN6/CN5 traced pinout')
 check([net[('J2', i)] for i in range(1, 13)] == CN4, 'J2 matches CN4 traced pinout')
-check([net[('J3', i)] for i in (1, 2, 3)] == ['BANK0', 'BANK1', 'GND'], 'J3 = BANK0, BANK1, GND (matches DAT board J2)')
+check([net[('J3', i)] for i in (1, 2)] == ['GND', 'GND'] and {net[('J3', 3)], net[('J3', 4)]} == {'BANK0', 'BANK1'}, 'J3 = G, G, B, B (matches DAT board J2; bank order is free)')
 check({net[('R1', 1)], net[('R1', 2)]} == {'BANK0', 'GND'} and {net[('R2', 1)], net[('R2', 2)]} == {'BANK1', 'GND'},
       'R1/R2 pull BANK0/BANK1 low (no DAT board = bank 0 = 512K)')
 

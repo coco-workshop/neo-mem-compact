@@ -1,6 +1,6 @@
 PASS J1 matches CN6/CN5 traced pinout
 PASS J2 matches CN4 traced pinout
-PASS J3 = BANK0, BANK1, GND (matches DAT board J2)
+PASS J3 = G, G, B, B (matches DAT board J2; bank order is free)
 PASS R1/R2 pull BANK0/BANK1 low (no DAT board = bank 0 = 512K)
 PASS U2 power pins
 PASS ~WE0=1 ~WE1=1 -> SRAM ~WE,~BLE,~BHE = (1, 0, 0) (read)
@@ -26,7 +26,7 @@ PASS U4 clocked by RAS (U2 pin 11), outputs always enabled
 PASS U4 power pins
 PASS U4 unused inputs tied to GND
 PASS 4 decoupling caps across +5V/GND
-PASS schematic netlist matches PCB pad-for-pad (153 pads)
+PASS schematic netlist matches PCB pad-for-pad (154 pads)
 PASS outline inside the proven cc3-512k envelope (2034 mm2)
 
 ALL CHECKS PASSED

@@ -3,9 +3,9 @@
 module dat2m_tb;
     reg [15:0] A = 16'hFFFF; reg [7:0] D = 8'h00;
     reg RW = 1, E = 0, Q = 0, RESETn = 0, EN2M = 1;
-    wire [1:0] BANK;
+    wire [1:0] BANK; wire LED_FASTn;
     dat2m dut(.A(A), .D0(D[0]), .D1(D[1]), .D3(D[3]), .D6(D[6]), .D7(D[7]),
-              .RW(RW), .E(E), .Q(Q), .RESETn(RESETn), .EN2M(EN2M), .BANK(BANK));
+              .RW(RW), .E(E), .Q(Q), .RESETn(RESETn), .EN2M(EN2M), .BANK(BANK), .LED_FASTn(LED_FASTn));
 
     integer errors = 0, checks = 0;
     reg fast = 0;                      // what the CoCo is really running at
@@ -51,6 +51,16 @@ module dat2m_tb;
         end
     endtask
 
+    task led(input want, input [8*40-1:0] what);
+        begin
+            checks = checks + 1;
+            if (LED_FASTn !== want) begin
+                errors = errors + 1;
+                $display("FAIL %0s: LED_FASTn=%b want %b", what, LED_FASTn, want);
+            end
+        end
+    endtask
+
     task wr(input [15:0] addr, input [7:0] data);
         begin cycle(addr, 0, data, 2'bxx, 2'bxx); end
     endtask
@@ -60,8 +70,9 @@ module dat2m_tb;
         repeat (3) begin #(TICK*16) E = ~E; end
         E = 0; RESETn = 1;
 
-        // 1. after reset: everything is bank 0
+        // 1. after reset: everything is bank 0, turbo LED off
         cycle(16'h4000, 1, 0, 2'b00, 2'b00);
+        led(1, "LED off after reset");
         // 2. MMU still off: writing bank bits doesn't affect CPU accesses
         wr(16'hFFA2, 8'hC5);                       // block reg 2 (task 0, $4000) <- bank 3
         cycle(16'h4000, 1, 0, 2'b00, 2'b00);
@@ -103,7 +114,14 @@ module dat2m_tb;
         // 9. fast mode: write $FFD9, real clock changes after this cycle
         wr(16'hFFD9, 8'h00); fast = 1;
         cycle(16'h4000, 1, 0, 2'b10, 2'b11);
+        led(0, "LED on in fast mode");
         cycle(16'h7000, 1, 0, 2'b10, 2'b11);       // task0 reg 3 was set to bank 3 in step 6
+        wr(16'hFFD8, 8'h00); fast = 0;
+        cycle(16'h4000, 1, 0, 2'b10, 2'b11);
+        led(1, "LED off after $FFD8");
+        wr(16'hFFD9, 8'h5A); fast = 1;             // any value written to $FFD9 means fast
+        cycle(16'h4000, 1, 0, 2'b10, 2'b11);
+        led(0, "LED on for any $FFD9 value");
         wr(16'hFFD8, 8'h00); fast = 0;
         cycle(16'h4000, 1, 0, 2'b10, 2'b11);
         // 10. MMU off again -> bank 0 for CPU, video bank unaffected
@@ -114,9 +132,13 @@ module dat2m_tb;
         cycle(16'h4000, 1, 0, 2'b00, 2'b00);
         EN2M = 1;
         cycle(16'h4000, 1, 0, 2'b10, 2'b11);
-        // 12. reset clears everything
-        RESETn = 0; #(TICK*4); RESETn = 1;
+        // 12. reset clears everything, including the turbo LED
+        wr(16'hFFD9, 8'h00); fast = 1;
+        cycle(16'h4000, 1, 0, 2'b10, 2'b11);
+        led(0, "LED on before reset");
+        RESETn = 0; #(TICK*4); RESETn = 1; fast = 0;
         cycle(16'h4000, 1, 0, 2'b00, 2'b00);
+        led(1, "LED off after reset");
 
         $display("%0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("ALL TESTS PASSED");

@@ -19,12 +19,18 @@ PLACE = {
     'J1': (X0, Y0, 0),
     'U1': (X0 + 7.62, Y0 + 58.2, 0),
     'J3': (X0 + 1.3, Y0 + 72.6, 90),       # 2x5 JTAG: odd pins along +x, even row above
-    'J2': (X0 + 15.24, Y0 + 67.2, 0),      # 1x3, runs down +y
+    'J2': (X0 + 15.24, Y0 + 66.7, 0),      # 1x4 bank header (G G B B), runs down +y
+    'J4': (X0 + 18.9, Y0 + 66.7, 0),       # 1x2 turbo LED header beside it
+    'R1': (X0 + 18.9, Y0 + 72.2, 90),
+    'R2': (X0 + 18.9, Y0 + 74.2, 90),
+    'R3': (X0 + 12.85, Y0 + 66.6, 90),
     'JP1': (X0 + 7.62, Y0 + 51.6, 0),      # back side, between the CPU rows
-
 }
+XR, YB = X0 + 20.3, Y0 + 76.4             # right edge of the CPLD end, bottom edge
+# Same width as the CPU along its length; the CPLD end widens to the right for J4.
 OUTLINE = [(X0 - 2.2, Y0 - 1.2), (X0 - 1.2, Y0 - 2.2), (X0 + 16.44, Y0 - 2.2), (X0 + 17.44, Y0 - 1.2),
-           (X0 + 17.44, Y0 + 74.0), (X0 + 16.44, Y0 + 75.0), (X0 - 1.2, Y0 + 75.0), (X0 - 2.2, Y0 + 74.0)]
+           (X0 + 17.44, Y0 + 50.0), (X0 + 18.44, Y0 + 51.0), (XR - 1.0, Y0 + 51.0), (XR, Y0 + 52.0),
+           (XR, YB - 1.0), (XR - 1.0, YB), (X0 - 1.2, YB), (X0 - 2.2, YB - 1.0)]
 
 
 def padpos(fp, num):
@@ -80,16 +86,25 @@ def main():
     # CPLD pin assignment: Hungarian on distance from each signal's source pad
     def src(sig):
         if sig in ('BANK0', 'BANK1'):
-            return padpos(fps['J2'], {'BANK0': 1, 'BANK1': 2}[sig])
+            return padpos(fps['J2'], {'BANK0': 3, 'BANK1': 4}[sig])
+        if sig == 'LED_FASTn':
+            return padpos(fps['J4'], 2)
         if sig == 'EN2M':
             return padpos(fps['JP1'], 2)
         return padpos(fps['J1'], next(k for k, v in D.CPU.items() if v == sig))
-    sigs, pins = D.IO_SIGNALS, D.CPLD_IO
-    cost = np.array([[np.hypot(*(np.subtract(src(s), padpos(U, p)))) for p in pins] for s in sigs])
-    r, c = linear_sum_assignment(cost)
-    a = {pins[j]: sigs[i] for i, j in zip(r, c)}
-    json.dump({str(k): v for k, v in sorted(a.items())}, open(os.path.join(HERE, 'assign.json'), 'w'), indent=1)
-    import importlib; importlib.reload(D)
+    # The assignment in assign.json is frozen: it is the one the CPLD logic was fitted
+    # with. Only if it is missing is a new one chosen (and the logic must be refitted).
+    apath = os.path.join(HERE, 'assign.json')
+    if os.path.exists(apath):
+        a = {int(k): v for k, v in json.load(open(apath)).items()}
+    else:
+        sigs, pins = D.IO_SIGNALS, D.CPLD_IO
+        cost = np.array([[np.hypot(*(np.subtract(src(s), padpos(U, p)))) for p in pins] for s in sigs])
+        r, c = linear_sum_assignment(cost)
+        a = {pins[j]: sigs[i] for i, j in zip(r, c)}
+        json.dump({str(k): v for k, v in sorted(a.items())}, open(apath, 'w'), indent=1)
+        import importlib; importlib.reload(D)
+    assert sorted(a.values()) == sorted(D.IO_SIGNALS), 'assign.json does not cover IO_SIGNALS'
 
     nets = {}
     def net(name):
@@ -111,13 +126,13 @@ def main():
     for ref, fp in fps.items():
         rf = fp.Reference()
         rf.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8))); rf.SetTextThickness(mm(0.12))
-        if ref[0] in 'C' or ref in ('JP1', 'J1'):
+        if ref[0] in 'CRT' or ref in ('JP1', 'J1'):
             rf.SetLayer(pcbnew.F_Fab)
         elif ref == 'U1':
             rf.SetPosition(fp.GetPosition()); rf.SetTextAngleDegrees(0)
         fp.Value().SetVisible(False)
-    fps['J3'].Reference().SetLayer(pcbnew.F_Fab)
-    fps['J2'].Reference().SetLayer(pcbnew.F_Fab)
+    for r_ in ('J2', 'J3', 'J4'):
+        fps[r_].Reference().SetLayer(pcbnew.F_Fab)
 
     def text(s, x, y, size=0.8, angle=0, back=False):
         t = pcbnew.PCB_TEXT(board); t.SetText(s); t.SetLayer(pcbnew.B_SilkS if back else pcbnew.F_SilkS)
@@ -126,11 +141,13 @@ def main():
         t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size))); t.SetTextThickness(mm(size * 0.15))
         board.Add(t)
     text('neo-mem-2048k-compact', X0 + 7.62, Y0 + 20.0, 1.0, 90)
-    text('DAT board v1', X0 + 9.5, Y0 + 20.0, 1.0, 90)
+    text('DAT board v2', X0 + 9.5, Y0 + 20.0, 1.0, 90)
     text('CPU pin 1', X0 + 5.6, Y0 + 0.0, 0.8)
-    text('JTAG', X0 + 6.4, Y0 + 65.9, 0.8, back=True)
-    text('B0', X0 + 13.0, Y0 + 67.2, 0.8, back=True); text('B1', X0 + 13.0, Y0 + 69.74, 0.8, back=True)
-    text('G', X0 + 13.0, Y0 + 72.28, 0.8, back=True)
+    text('JTAG', X0 + 6.4, Y0 + 74.9, 0.8, back=True)
+    for i, t_ in enumerate(('G', 'G', 'B', 'B')):                 # back silk beside J2
+        text(t_, X0 + 13.6, Y0 + 69.24 + 2.54 * (i - 1), 0.8, back=True)
+    text('LED', X0 + 18.9, Y0 + 64.4, 0.8, back=True)
+    text('+', X0 + 17.4, Y0 + 63.9, 0.8, back=True)
     text('512K  JP1  2MB', X0 + 7.62, Y0 + 49.6, 0.8, back=True)  # reads correctly from the back: pad 1 (2MB) is on the right
 
     ds = board.GetDesignSettings()
@@ -144,7 +161,7 @@ def main():
     sigpin.update({'ECLK': 37, 'QCLK': 38, 'RESETn': 39, 'RW': 40})
     vname = lambda s: s
     ins = ['A%d' % i for i in range(16)] + ['D0', 'D1', 'D3', 'D6', 'D7', 'RW', 'ECLK', 'QCLK', 'RESETn', 'EN2M']
-    outs = ['BANK0', 'BANK1']
+    outs = ['BANK0', 'BANK1', 'LED_FASTn']
     lines = ['// AUTO-GENERATED by scripts/dat/make_pcb.py - pin numbers must match the PCB.',
              '// Build with cpld/build.sh (hoglet67/atf15xx_yosys + Atmel fit1504 from ProChip 5.0.x).',
              '// E and Q are named ECLK/QCLK here: top-level ports called E or Q collide with',
@@ -155,14 +172,14 @@ def main():
              ');',
              '    dat2m core (.A({%s}),' % ', '.join('A%d' % i for i in range(15, -1, -1)),
              '                .D0(D0), .D1(D1), .D3(D3), .D6(D6), .D7(D7), .RW(RW), .E(ECLK), .Q(QCLK),',
-             '                .RESETn(RESETn), .EN2M(EN2M), .BANK({BANK1, BANK0}));',
+             '                .RESETn(RESETn), .EN2M(EN2M), .BANK({BANK1, BANK0}), .LED_FASTn(LED_FASTn));',
              'endmodule', '',
              '// Pin assignment (ATF1504AS TQFP-44). JTAG: 1 TDI, 7 TMS, 26 TCK, 32 TDO.',
              '//PIN: CHIP "dat2m_top" ASSIGNED TO AN TQFP44']
     lines += ['//PIN: %-10s : %d' % (s_, sigpin[s_]) for s_ in ins + outs]
     lines.append('')
     open(os.path.join(CPLD_DIR, 'dat2m_top.v'), 'w').write('\n'.join(lines))
-    print('saved', path, 'nets', len(nets), 'max src->pin %.1f mm' % cost[r, c].max())
+    print('saved', path, 'nets', len(nets))
 
 
 if __name__ == '__main__':

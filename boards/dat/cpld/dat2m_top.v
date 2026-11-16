@@ -32,11 +32,12 @@ module dat2m_top (
     input  wire RESETn,
     input  wire EN2M,
     output wire BANK0,
-    output wire BANK1
+    output wire BANK1,
+    output wire LED_FASTn
 );
     dat2m core (.A({A15, A14, A13, A12, A11, A10, A9, A8, A7, A6, A5, A4, A3, A2, A1, A0}),
                 .D0(D0), .D1(D1), .D3(D3), .D6(D6), .D7(D7), .RW(RW), .E(ECLK), .Q(QCLK),
-                .RESETn(RESETn), .EN2M(EN2M), .BANK({BANK1, BANK0}));
+                .RESETn(RESETn), .EN2M(EN2M), .BANK({BANK1, BANK0}), .LED_FASTn(LED_FASTn));
 endmodule
 
 // Pin assignment (ATF1504AS TQFP-44). JTAG: 1 TDI, 7 TMS, 26 TCK, 32 TDO.
@@ -69,3 +70,4 @@ endmodule
 //PIN: EN2M       : 18
 //PIN: BANK0      : 22
 //PIN: BANK1      : 21
+//PIN: LED_FASTn  : 14

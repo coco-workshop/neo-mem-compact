@@ -34,7 +34,11 @@ check(all(net[('U1', p)] == n for p, n in jt.items()), 'JTAG pins 1/7/26/32 = TD
 hdr = {1: 'TCK', 2: 'GND', 3: 'TDO', 4: '+5V', 5: 'TMS', 9: 'TDI', 10: 'GND'}
 check(all(net[('J3', p)] == n for p, n in hdr.items()) and all(net[('J3', p)] is None for p in (6, 7, 8)),
       'J3 follows the 10-pin Atmel ATDH1150USB / USB-Blaster layout')
-check([net[('J2', i)] for i in (1, 2, 3)] == ['BANK0', 'BANK1', 'GND'], 'J2 = BANK0, BANK1, GND (matches memory board J3)')
+check([net[('J2', i)] for i in (1, 2, 3, 4)] == ['GND', 'GND', 'B0', 'B1'], 'J2 = G, G, B, B (matches memory board J3)')
+check({net[('R1', 1)], net[('R1', 2)]} == {'BANK0', 'B0'} and {net[('R2', 1)], net[('R2', 2)]} == {'BANK1', 'B1'},
+      'BANK0/BANK1 reach J2 only through series resistors R1/R2')
+check([net[('J4', 1)], net[('J4', 2)]] == ['+5V', 'LED_K'] and {net[('R3', 1)], net[('R3', 2)]} == {'LED_K', 'LED_FASTn'},
+      'turbo LED header J4: +5V, cathode through R3 to the CPLD')
 check([net[('JP1', i)] for i in (1, 2, 3)] == ['+5V', 'EN2M', 'GND'],
       'JP1: EN2M on the common pad, +5V (2MB, bridged as made) and GND (512K) either side')
 jp = b.FindFootprintByReference('JP1')
@@ -46,9 +50,9 @@ dirs = dict((n, d) for d, n in re.findall(r'^\s+(input|output)\s+wire\s+(\w+)', 
 locs = [(p, dirs.get(s), s) for s, p in re.findall(r'^//PIN:\s+(\w+)\s*:\s*(\d+)', v, re.M)]
 alias = {'RW': 'RW', 'RESETn': '~RESET', 'ECLK': 'E', 'QCLK': 'Q'}
 bad = [(p, s, net[('U1', int(p))]) for p, d, s in locs if net[('U1', int(p))] != alias.get(s, s)]
-check(len(locs) == 28 and not bad, 'all 28 CPLD pin constraints in dat2m_top.v match the PCB%s' % ('' if not bad else ' %s' % bad))
+check(len(locs) == 29 and not bad, 'all 29 CPLD pin constraints in dat2m_top.v match the PCB%s' % ('' if not bad else ' %s' % bad))
 outs = [s for p, d, s in locs if d == 'output']
-check(sorted(outs) == ['BANK0', 'BANK1'], 'CPLD drives only BANK0/BANK1 - never the CPU bus')
+check(sorted(outs) == ['BANK0', 'BANK1', 'LED_FASTn'], 'CPLD drives only BANK0/BANK1 and the LED - never the CPU bus')
 used = {int(p) for p, d, s in locs}
 check(not (used & set(jt)), 'no logic signal on a JTAG pin')
 caps = [f.GetReference() for f in b.GetFootprints() if f.GetReference().startswith('C')]

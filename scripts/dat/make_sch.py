@@ -23,18 +23,23 @@ cpld = box(16 * 2.54,
            [(1, 'TDI', 'input'), (7, 'TMS', 'input'), (26, 'TCK', 'input'), (32, 'TDO', 'output')],
            [(p, 'VCC', 'power_in') for p in D.CPLD_VCC], [(p, 'GND', 'power_in') for p in D.CPLD_GND])
 jtag = box(6 * 2.54, [(p, str(p), 'passive') for p in (1, 3, 5, 7, 9)], [(p, str(p), 'passive') for p in (2, 4, 6, 8, 10)])
-conn3 = box(4 * 2.54, [(i, str(i), 'passive') for i in (1, 2, 3)], [])
+conn4 = box(5 * 2.54, [(i, str(i), 'passive') for i in (1, 2, 3, 4)], [])
+conn2 = box(3 * 2.54, [(i, str(i), 'passive') for i in (1, 2)], [])
 
-s = Sheet(NAME, 'neomem', 'neo-mem-2048k-compact: DAT board')
+s = Sheet(NAME, 'neomem', 'neo-mem-compact: DAT board v2')
 s.add_box('CPU_interposer_40', cpu); s.add_box('ATF1504AS_TQFP44', cpld)
-s.add_box('JTAG_2x05', jtag); s.add_box('Conn_01x03', conn3)
-s.add_two_pin('C', 'C')
+s.add_box('JTAG_2x05', jtag); s.add_box('Conn_01x04', conn4); s.add_box('Conn_01x02', conn2)
+s.add_two_pin('C', 'C'); s.add_two_pin('R', 'R')
 s.add_box('SolderJumper_3_Bridged12', box(6 * 2.54, [(1, '1 (+5V)', 'passive'), (2, '2 (common)', 'passive'), (3, '3 (GND)', 'passive')], []))
 P = D.PARTS
 s.place('J1', 'CPU_interposer_40', 76.2, 127.0, P['J1']['value'], P['J1']['fp'], D.CPU)
 s.place('U1', 'ATF1504AS_TQFP44', 205.74, 116.84, P['U1']['value'], P['U1']['fp'], D.U1)
 s.place('J3', 'JTAG_2x05', 309.88, 101.6, 'JTAG (ATDH1150USB / USB-Blaster)', P['J3']['fp'], D.JTAG)
-s.place('J2', 'Conn_01x03', 309.88, 152.4, P['J2']['value'], P['J2']['fp'], D.J2)
+s.place('J2', 'Conn_01x04', 309.88, 152.4, P['J2']['value'], P['J2']['fp'], D.J2)
+s.place('J4', 'Conn_01x02', 309.88, 228.6, P['J4']['value'], P['J4']['fp'], D.J4)
+for i, r in enumerate(('R1', 'R2', 'R3')):
+    s.place(r, 'R', 266.7 + i * 12.7, 228.6, P[r]['value'], P[r]['fp'], P[r]['pins'])
+
 s.place('JP1', 'SolderJumper_3_Bridged12', 309.88, 190.5, '1-2 = 2MB (as made), 2-3 = 512K', P['JP1']['fp'], P['JP1']['pins'])
 for i, c in enumerate(D.CAPS):
     s.place(c, 'C', 172.72 + i * 12.7, 200.66, '100n', P[c]['fp'], {1: '+5V', 2: 'GND'})
@@ -45,7 +50,8 @@ for x, y, t in [
         (25.4, 35.56, 'U1 shadows writes to $FFA0-$FFAF (D7:D6), $FF90 (MMU enable, MC3), $FF91 (task), $FF9B (video bank), $FFD8/9 (speed)'),
         (25.4, 40.64, 'and drives BANK1:0 = physical A20:A19 for each GIME slot. Logic: cpld/dat2m.v, pins: cpld/dat2m_top.v.'),
         (25.4, 45.72, 'CPLD IO pin numbers above carry the signals named on their labels (assignment chosen for routing).'),
-        (25.4, 256.54, 'neo-mem-2048k-compact - CC BY-SA 4.0.')]:
+        (25.4, 50.8, 'J2 = G, G, B, B to the memory board (R1/R2 100R protect against a reversed cable). J4 = turbo LED (+5V, cathode via R3); lit in fast mode.'),
+        (25.4, 256.54, 'neo-mem-compact - CC BY-SA 4.0.')]:
     s.note(x, y, t)
 print('labels/no-connects', s.write(os.path.join(OUT, NAME + '.kicad_sch'), os.path.join(OUT, 'neomem.kicad_sym')))
 open(os.path.join(OUT, 'sym-lib-table'), 'w').write(

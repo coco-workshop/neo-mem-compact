@@ -5,14 +5,16 @@ PASS E on GCLK1 (pin 37), the global clock
 PASS /RESET on GCLR (pin 39), the global clear
 PASS JTAG pins 1/7/26/32 = TDI/TMS/TCK/TDO
 PASS J3 follows the 10-pin Atmel ATDH1150USB / USB-Blaster layout
-PASS J2 = BANK0, BANK1, GND (matches memory board J3)
+PASS J2 = G, G, B, B (matches memory board J3)
+PASS BANK0/BANK1 reach J2 only through series resistors R1/R2
+PASS turbo LED header J4: +5V, cathode through R3 to the CPLD
 PASS JP1: EN2M on the common pad, +5V (2MB, bridged as made) and GND (512K) either side
 PASS JP1 is the pre-bridged 1-2 type, on the back (no assembly)
-PASS all 28 CPLD pin constraints in dat2m_top.v match the PCB
-PASS CPLD drives only BANK0/BANK1 - never the CPU bus
+PASS all 29 CPLD pin constraints in dat2m_top.v match the PCB
+PASS CPLD drives only BANK0/BANK1 and the LED - never the CPU bus
 PASS no logic signal on a JTAG pin
 PASS one 100 nF cap per CPLD VCC pin
-PASS schematic netlist matches PCB pad-for-pad (108 pads)
-     board 19.7 x 77.2 mm
+PASS schematic netlist matches PCB pad-for-pad (117 pads)
+     board 22.6 x 78.7 mm
 
 ALL CHECKS PASSED

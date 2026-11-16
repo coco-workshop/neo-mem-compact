@@ -1,10 +1,46 @@
-** Drc report for hardware/dat/neo-mem-2048k-dat.kicad_pcb **
-** Created on 2026-11-14 22:17:08 **
+** Drc report for boards/dat/hardware/neo-mem-2048k-dat.kicad_pcb **
+** Created on 2026-11-16 00:15:25 **
 
-** Found 1 DRC violations **
-[lib_footprint_mismatch]: Footprint 'DIP-40_W15.24mm' does not match copy in library 'Package_DIP'.
+** Found 13 DRC violations **
+[lib_footprint_issues]: Footprint 'R_0402_1005Metric' not found in library 'Resistor_SMD'.
+    Local override; Severity: warning
+    @(112.8500 mm, 126.6000 mm): Footprint R3
+[lib_footprint_issues]: Footprint 'PinHeader_2x05_P2.54mm_Vertical' not found in library 'Connector_PinHeader_2.54mm'.
+    Local override; Severity: warning
+    @(101.3000 mm, 132.6000 mm): Footprint J3
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(106.0200 mm, 110.7500 mm): Footprint C4
+[lib_footprint_issues]: Footprint 'TQFP-44_10x10mm_P0.8mm' not found in library 'Package_QFP'.
+    Local override; Severity: warning
+    @(107.6200 mm, 118.2000 mm): Footprint U1
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(100.1700 mm, 120.6000 mm): Footprint C1
+[lib_footprint_issues]: Footprint 'PinHeader_1x02_P2.54mm_Vertical' not found in library 'Connector_PinHeader_2.54mm'.
+    Local override; Severity: warning
+    @(118.9000 mm, 126.7000 mm): Footprint J4
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(115.0700 mm, 117.4000 mm): Footprint C3
+[lib_footprint_issues]: Footprint 'R_0402_1005Metric' not found in library 'Resistor_SMD'.
+    Local override; Severity: warning
+    @(118.9000 mm, 132.2000 mm): Footprint R1
+[lib_footprint_issues]: Footprint 'R_0402_1005Metric' not found in library 'Resistor_SMD'.
+    Local override; Severity: warning
+    @(118.9000 mm, 134.2000 mm): Footprint R2
+[lib_footprint_issues]: Footprint 'DIP-40_W15.24mm' not found in library 'Package_DIP'.
     Local override; Severity: warning
     @(100.0000 mm, 60.0000 mm): Footprint J1
+[lib_footprint_issues]: Footprint 'PinHeader_1x04_P2.54mm_Vertical' not found in library 'Connector_PinHeader_2.54mm'.
+    Local override; Severity: warning
+    @(115.2400 mm, 126.7000 mm): Footprint J2
+[lib_footprint_issues]: Footprint 'C_0402_1005Metric' not found in library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(107.6200 mm, 125.6500 mm): Footprint C2
+[lib_footprint_issues]: Footprint 'SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm' not found in library 'Jumper'.
+    Local override; Severity: warning
+    @(107.6200 mm, 111.6000 mm): Footprint JP1
 
 ** Found 0 unconnected pads **
 

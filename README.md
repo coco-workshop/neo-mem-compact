@@ -11,7 +11,8 @@ the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
 
 **Which to build:**
 * **512K:** the 512K board. It's the cheapest option.
-* **2 MB:** the 2048K memory board plus the DAT board, joined by a 3-wire cable.
+* **2 MB:** the 2048K memory board plus the DAT board, joined by a 4-wire cable
+  (both headers are G, G, B, B).
   The memory board also runs alone as 512K, so you can fit it first and add the DAT
   board later.
 
@@ -84,11 +85,15 @@ All of these registers are write-only (reads come from the GIME as usual) and ar
 cleared by /RESET, so a reset machine is a plain 512K CoCo 3 until software writes
 bits 7:6.
 
+**Turbo LED:** J4 (+5V, cathode through R3) drives a case LED that lights whenever
+the CPU runs fast: any write to `$FFD9` turns it on; `$FFD8` or /RESET turns it off.
+
 **512K mode:** solder jumper **JP1** on the back of the DAT board selects the mode.
 It ships bridged 1–2 (2 MB). Re-bridge it 2–3 to force bank 0, for any old program
 that writes junk into bits 7:6 of the MMU registers.
 
-The DAT board doesn't buffer or protect the CPU bus.
+The DAT board doesn't buffer or protect the CPU bus. Its two bank outputs pass
+through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short them.
 
 ## Fitting
 1. **Memory board (either size):** remove the four DRAMs (IC16–IC19) and cut C65 and
@@ -98,11 +103,15 @@ The DAT board doesn't buffer or protect the CPU bus.
    horizontal socket above the keyboard connector), with pin 1 at the left end.
 2. **DAT board (2 MB only):** the CPU must be socketed. Pull the 6809/6309, plug the
    DAT board into the CPU socket with pin 1 (square pad, marked "CPU pin 1")
-   matching the socket's pin 1, then plug the CPU into the DAT board. The CPLD end
-   hangs about 25 mm past the CPU's pin-20 end; **check there's room in your machine
-   before ordering.**
-3. Link DAT **J2** to memory **J3** pin for pin (B0, B1, G) with a 3-wire
-   female–female jumper cable, kept as short as practical.
+   matching the socket's pin 1, then plug the CPU into the DAT board. The board is the
+   CPU's width along its length; the CPLD end hangs about 28 mm past the CPU's pin-20
+   end and is about 3 mm wider on the pin-21 side (22.6 × 78.7 mm overall). **Check
+   there's room in your machine before ordering.**
+3. Link DAT **J2** to memory **J3** with a 4-wire female–female cable, kept as short
+   as practical. Both headers are **G, G, B, B** (marked on the silkscreen, pin 1 =
+   square pad = G): match G to G and B to B. Which B goes to which doesn't matter -
+   swapping the two bank lines only reorders memory. A 2-wire cable on the B pins
+   alone also works (the grounds are extra).
 
 ## The CPLD (`boards/dat/cpld`)
 * `dat2m.v` holds the logic and `dat2m_tb.v` is its testbench
@@ -112,9 +121,9 @@ The DAT board doesn't buffer or protect the CPU bus.
 * **`dat2m_top.jed` is ready to program** (`dat2m_top.fit` is the fitter report).
   It was built with [hoglet67/atf15xx_yosys](https://github.com/hoglet67/atf15xx_yosys)
   (Yosys plus Atmel's `fit1504` from ProChip 5.0.x, run under Wine). With every pin
-  locked to the PCB it fits in 49 of 64 macrocells (38 flip-flops), with E on the
-  global clock (pin 37) and /RESET on global clear (pin 39). The fitter's gate-level
-  output passes the same 114-check testbench as the source.
+  locked to the PCB it fits in 50 of 64 macrocells, with E on the global clock
+  (pin 37), /RESET on global clear (pin 39) and the turbo LED on pin 14. The
+  fitter's gate-level output passes the same 129-check testbench as the source.
 * To rebuild: `ATF15XX=/path/to/atf15xx_yosys boards/dat/cpld/build.sh`. It
   synthesises, fits, and re-runs the testbench on the fitted netlist.
 * In `dat2m_top.v` the E and Q inputs are called `ECLK`/`QCLK`: top-level ports named
@@ -144,13 +153,15 @@ silkscreen triangle. Ordering all boards together shares shipping.
 * **U1:** ATF1504AS-10AU44. LCSC (C219301) is usually out of stock and expensive;
   DigiKey, Mouser and RS stock it for about $5. Untick U1 in JLC's BOM, let JLC fit
   only the four 0402 caps, and hand-solder the CPLD (TQFP-44, 0.8 mm pitch).
+* **R1, R2** 100 Ω (C25076) and **R3** 470 Ω (C25117), all JLC basic parts.
 * **J1** is a 40-pin **wire-wrap** DIP socket (long square tails, e.g. Mill-Max
   123-43-640-41-001000), mounted on top with its tails pushed through the board and
   trimmed to about 6 mm, so they plug into the CoCo's CPU socket. The holes are
   1.0 mm for the 0.64 mm square tails.
 
 **Hand-solder** all through-hole parts: memory board headers J1/J2 on the
-**bottom** (J3 on top, 2048K only), and the DAT board's J1, J2 (1×3) and J3 (2×5).
+**bottom** (J3, 1×4, on top, 2048K only), and the DAT board's J1, J2 (1×4),
+J3 (2×5, JTAG) and J4 (1×2, turbo LED).
 
 ## First power-up
 1. Check for shorts between +5V and GND on every board.
@@ -161,7 +172,8 @@ silkscreen triangle. Ordering all boards together shares shipping.
 4. **2 MB:** program the CPLD, fit the DAT board, and check the machine boots as a
    512K CoCo 3. Then check BANK0/BANK1 at memory J3 settle **before** /RAS falls (it's
    latched there), in both fast and slow mode. The design expects /RAS to fall at
-   least ~15 ns after the E/Q edge that starts the slot.
+   least ~15 ns after the E/Q edge that starts the slot. TP1/TP2 on the DAT board
+   are E and Q; the B pins of J2 and the GND/+5V pins of J3 are handy probe points.
 5. Test 2 MB with NitrOS-9 configured for 2 MB, or a 2 MB memory test.
 
 ## Regenerating

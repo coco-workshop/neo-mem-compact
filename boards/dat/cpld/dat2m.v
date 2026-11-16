@@ -1,4 +1,4 @@
-// neo-mem-2048k-compact - DAT (dynamic address translation) extension for the CoCo 3
+// neo-mem-compact DAT board - dynamic address translation for the CoCo 3, plus a turbo LED.
 // Target: Microchip ATF1504AS-10AU44 (5 V, 64 macrocells), sitting under the 6809/6309.
 //
 // The GIME's MMU only stores 6 bits per block register (512K). This CPLD shadows the
@@ -9,7 +9,7 @@
 //   $FFA0-$FFAF  MMU block registers   - D7:D6 are kept here (GIME keeps D5:D0)
 //   $FF90        INIT0                  - bit 6 MMU enable, bit 3 MC3 ($FExx constant page)
 //   $FF91        INIT1                  - bit 0 task select
-//   $FF9B        video bank (Disto)     - bits 1:0 = A20:A19 for video fetches
+//   $FF9B        video bank             - bits 1:0 = A20:A19 for video fetches
 //   $FFD8/$FFD9  CPU rate (SAM R1)      - slow/fast, needed to find the CPU slot
 //
 // GIME memory slots run at a fixed ~3.58 MHz. Counting from the falling edge of E:
@@ -20,6 +20,9 @@
 // All shadow registers are write-only (reads come from the GIME as normal) and are
 // cleared by /RESET, so the machine starts as a plain 512K CoCo 3 (bank 0).
 // Tie EN2M low (solder jumper JP1) to force bank 0 permanently = 512K mode.
+//
+// LED_FASTn (active low, sinks a case LED through a resistor) is on while the CPU
+// runs fast: set by any write to $FFD9, cleared by $FFD8 and /RESET.
 
 module dat2m (
     input  wire [15:0] A,       // CPU address bus
@@ -29,13 +32,14 @@ module dat2m (
     input  wire Q,              // 6809 Q clock
     input  wire RESETn,         // CPU /RESET (GCLR)
     input  wire EN2M,           // 1 = 2 MB mode, 0 = force bank 0
-    output wire [1:0] BANK      // A20:A19 to the memory board
+    output wire [1:0] BANK,     // A20:A19 to the memory board
+    output wire LED_FASTn       // turbo LED, active low
 );
     reg [1:0] mmu [0:15];       // {task, A15:A13} -> D7:D6
     reg       mmuen, mc3, tsk, fast;
     reg [1:0] vbank;
 
-    wire wr    = ~RW;
+    wire wr     = ~RW;
     wire is_ffa = (A[15:4] == 12'hFFA);
 
     integer i;
@@ -57,5 +61,6 @@ module dat2m (
     wire fexx     = (A[15:8] == 8'hFE);
     wire [1:0] cpu_bank = (~mmuen | (mc3 & fexx)) ? 2'b00 : mmu[{tsk, A[15:13]}];
 
-    assign BANK = EN2M ? (cpu_slot ? cpu_bank : vbank) : 2'b00;
+    assign BANK      = EN2M ? (cpu_slot ? cpu_bank : vbank) : 2'b00;
+    assign LED_FASTn = ~fast;
 endmodule
