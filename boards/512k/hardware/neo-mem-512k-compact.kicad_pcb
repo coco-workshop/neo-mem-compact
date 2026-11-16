@@ -1012,7 +1012,7 @@
     (stroke (width 0.05) (type default)) (layer "Edge.Cuts") (tstamp f7d1abac-426f-4bd0-a4bf-bec705dda08a))
   (gr_line (start 168.633 135.474) (end 168.222 136.091)
     (stroke (width 0.05) (type default)) (layer "Edge.Cuts") (tstamp fa6a6a4d-fc1e-486a-b3d1-6db23e80735c))
-  (gr_text "neo-mem-512k-compact\nCoCo 3 512K SRAM v1" (at 150 129.6) (layer "F.SilkS") (tstamp 72b27d42-0eb9-4ec7-af5e-49ba51165aae)
+  (gr_text "neo-mem-512k-compact\nCoCo 3 512K SRAM v2" (at 150 129.6) (layer "F.SilkS") (tstamp 72b27d42-0eb9-4ec7-af5e-49ba51165aae)
     (effects (font (size 1 1) (thickness 0.15)))
   )
 

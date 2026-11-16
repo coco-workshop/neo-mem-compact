@@ -24,7 +24,12 @@ the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
 
 | 512K | 2048K memory | DAT |
 |---|---|---|
-| ![512K](boards/512k/docs/preview.png) | ![2048K memory](boards/2048k-mem/docs/preview.png) | ![DAT](boards/dat/docs/preview.png) |
+| ![512K](boards/512k/docs/render.png) | ![2048K memory](boards/2048k-mem/docs/render.png) | ![DAT](boards/dat/docs/render.png) |
+| [layout](boards/512k/docs/preview.png) | [layout](boards/2048k-mem/docs/preview.png) | [layout](boards/dat/docs/preview.png) · [with CPU fitted](boards/dat/docs/render-cpu.png) |
+
+*3D renders of the assembled boards, made from the real PCB layers and KiCad's
+standard part models (the DAT board's wire-wrap socket is drawn as a normal socket).
+The "layout" links show the flat top and bottom views.*
 
 **Status: untested - no board has been built yet.** What *has* been checked: all
 three boards pass DRC, and each finished PCB was checked independently against
@@ -248,6 +253,11 @@ The 512K and DAT boards work the same way (the DAT checker also takes
 `boards/dat/cpld/dat2m_top.v`, and `finish.py` takes `JP1` as a keepout). The fine
 pitches need the 0.15 mm default clearance set in each `.kicad_pro`. Autorouting
 isn't deterministic; the committed boards are the ones that were checked.
+
+The 3D renders (`boards/*/docs/render*.png`) come from
+`python3 scripts/common/render_all.py`, which also needs `rsvg-convert`, `pyvista`
+and `cadquery-ocp`. It downloads KiCad's STEP part models into `~/.cache/kicad-3d`
+the first time.
 
 ## License and credit
 Derived from **cc3-512k** by Ciaran Anscomb (<https://gitlab.com/sixxie/cc3-512k>):

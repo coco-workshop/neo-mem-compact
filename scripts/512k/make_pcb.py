@@ -164,7 +164,7 @@ def main():
         r.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
     # Silkscreen title
     t = pcbnew.PCB_TEXT(board)
-    t.SetText('neo-mem-512k-compact\nCoCo 3 512K SRAM v1')
+    t.SetText('neo-mem-512k-compact\nCoCo 3 512K SRAM v2')
     t.SetPosition(pcbnew.VECTOR2I(mm(150), mm(129.6)))
     t.SetLayer(pcbnew.F_SilkS)
     t.SetTextSize(pcbnew.VECTOR2I(mm(1.0), mm(1.0)))
