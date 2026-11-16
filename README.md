@@ -172,8 +172,8 @@ J3 (2×5, JTAG) and J4 (1×2, turbo LED).
 4. **2 MB:** program the CPLD, fit the DAT board, and check the machine boots as a
    512K CoCo 3. Then check BANK0/BANK1 at memory J3 settle **before** /RAS falls (it's
    latched there), in both fast and slow mode. The design expects /RAS to fall at
-   least ~15 ns after the E/Q edge that starts the slot. TP1/TP2 on the DAT board
-   are E and Q; the B pins of J2 and the GND/+5V pins of J3 are handy probe points.
+   least ~15 ns after the E/Q edge that starts the slot. Probe E and Q on the CPU's
+   own pins, the bank lines on the DAT board's J2 B pins, and GND/+5V on its JTAG header.
 5. Test 2 MB with NitrOS-9 configured for 2 MB, or a 2 MB memory test.
 
 ## Regenerating
