@@ -1,5 +1,11 @@
 # neo-mem-compact
 
+> ⚠️ **UNTESTED DESIGN.** None of these boards has been built or tried in a CoCo 3.
+> They have only been checked on paper: design-rule checks, an independent pin-by-pin
+> check against datasheets, and simulation of the DAT board's logic. Real hardware may
+> still show timing or fit problems these checks can't catch. Build them at your own
+> risk, order the smallest quantity you can, and treat a first batch as prototypes.
+
 Compact surface-mount RAM expansions for the Tandy Color Computer 3. They plug into
 the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
 
@@ -20,10 +26,12 @@ the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
 |---|---|---|
 | ![512K](boards/512k/docs/preview.png) | ![2048K memory](boards/2048k-mem/docs/preview.png) | ![DAT](boards/dat/docs/preview.png) |
 
-**Status: not yet built.** All three boards pass DRC, and each finished PCB was
-checked independently against datasheet pinouts (`boards/*/docs/`). The DAT board's
-CPLD logic passes a cycle-level simulation in both CPU speed modes, both as written
-and after fitting into the chip.
+**Status: untested - no board has been built yet.** What *has* been checked: all
+three boards pass DRC, and each finished PCB was checked independently against
+datasheet pinouts (`boards/*/docs/`). The DAT board's CPLD logic passes a cycle-level
+simulation in both CPU speed modes, both as written and after fitting into the chip.
+Not yet confirmed on real hardware: memory timing on a real GIME (and on faster GIME
+replacements), the DAT board's bank timing against /RAS, and physical fit in the case.
 
 ## Connectors, jumpers and features
 
@@ -174,6 +182,9 @@ through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short th
   programming.
 
 ## Ordering (JLCPCB)
+**These are untested prototypes** (see the warning at the top): order the minimum
+quantity, and expect that a first build may need fixes.
+
 Each board has its own Gerbers, BOM and CPL file in `boards/<board>/fab/`. Upload the
 gerbers zip (2 layers, 1.6 mm), then the BOM and CPL for assembly. Check part
 rotations in JLC's placement preview: each chip's pin-1 dot should sit on its
