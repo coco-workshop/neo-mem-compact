@@ -56,8 +56,7 @@ Both memory boards replace the CoCo 3's four DRAMs with one 16-bit SRAM.
 
 ## How the DAT board works (2 MB)
 The GIME's MMU registers are only 6 bits wide, so it can only address 512K
-(64 × 8K blocks). Every CoCo 3 2 MB upgrade (Disto, Cloud-9 Triad + Pro-Tector+,
-Boomerang + Guardian) adds a board on the CPU bus that keeps the missing top two bits
+(64 × 8K blocks). Every CoCo 3 2 MB upgrade, from the original Disto kit onward, adds a board on the CPU bus that keeps the missing top two bits
 of each MMU register and supplies them as physical address lines A20:A19.
 
 The CPLD only listens to the CPU bus; the only signals it drives are the two bank lines.
@@ -89,7 +88,7 @@ bits 7:6.
 It ships bridged 1–2 (2 MB). Re-bridge it 2–3 to force bank 0, for any old program
 that writes junk into bits 7:6 of the MMU registers.
 
-The DAT board doesn't buffer or protect the CPU bus (unlike Cloud-9's Pro-Tector+).
+The DAT board doesn't buffer or protect the CPU bus.
 
 ## Fitting
 1. **Memory board (either size):** remove the four DRAMs (IC16–IC19) and cut C65 and
