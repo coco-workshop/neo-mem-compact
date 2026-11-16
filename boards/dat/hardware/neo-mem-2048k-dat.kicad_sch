@@ -1,7 +1,7 @@
 (kicad_sch (version 20230121) (generator eeschema)
 (uuid 130a0290-39ac-4a01-97b8-00a8db26c665)
 (paper "A3")
-(title_block (title "neo-mem-compact: DAT board v2") (rev "1") (comment 1 ""))
+(title_block (title "neo-mem-compact: DAT board v2") (rev "2") (comment 1 "neo-mem-compact (CC BY-SA 4.0)"))
 (lib_symbols
 (symbol "neomem:CPU_interposer_40" (in_bom yes) (on_board yes)
 (property "Reference" "U" (at 0 28.17 0) (effects (font (size 1.27 1.27))))

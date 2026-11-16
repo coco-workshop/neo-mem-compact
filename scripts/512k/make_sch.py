@@ -173,7 +173,7 @@ def main():
     inst('#FLG02', 'PWR_FLAG', 254.0, 157.48, 'PWR_FLAG', '', {1: 'GND'})
 
     notes = [
-        (25.4, 30.48, 'CoCo 3 512K SRAM expansion - compact SMD version'),
+        (25.4, 30.48, 'neo-mem-compact: 512K memory board v2 (CoCo 3 512K SRAM)'),
         (25.4, 35.56, 'Fits CN4/CN5/CN6. Remove IC16-IC19 and cut C65, C66 first (as for any 512K upgrade).'),
         (139.7, 30.48, 'Write logic (all active low):  ~BHE = ~WE0 XOR 1   ~BLE = ~WE1 XOR 1   ~WE = ~WE1 XOR ~BHE'),
         (139.7, 35.56, 'Invalid ~WE0=~WE1=0 gives ~WE=1 (no write). RAS = ~RAS XOR 1 clocks the row register on ~RAS fall.'),
@@ -186,7 +186,7 @@ def main():
     sch = '''(kicad_sch (version 20230121) (generator eeschema)
 (uuid %s)
 (paper "A3")
-(title_block (title "neo-mem-512k-compact: CoCo 3 512K SRAM") (rev "1") (comment 1 "Derived from gitlab.com/sixxie/cc3-512k (CC BY-SA 4.0)"))
+(title_block (title "neo-mem-compact: 512K memory board v2") (rev "2") (comment 1 "Derived from gitlab.com/sixxie/cc3-512k (CC BY-SA 4.0)"))
 (lib_symbols
 %s
 )

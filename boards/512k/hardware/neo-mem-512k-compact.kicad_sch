@@ -1,7 +1,7 @@
 (kicad_sch (version 20230121) (generator eeschema)
 (uuid 05ec3abd-87b3-44f5-9543-ce46de95c2ad)
 (paper "A3")
-(title_block (title "neo-mem-512k-compact: CoCo 3 512K SRAM") (rev "1") (comment 1 "Derived from gitlab.com/sixxie/cc3-512k (CC BY-SA 4.0)"))
+(title_block (title "neo-mem-compact: 512K memory board v2") (rev "2") (comment 1 "Derived from gitlab.com/sixxie/cc3-512k (CC BY-SA 4.0)"))
 (lib_symbols
 (symbol "cc3:SRAM_256Kx16" (in_bom yes) (on_board yes)
 (property "Reference" "U" (at 0 30.71 0) (effects (font (size 1.27 1.27))))
@@ -171,7 +171,7 @@
  (symbol "PWR_FLAG_0_1" (polyline (pts (xy 0 0) (xy 0 1.27) (xy -1.016 1.905) (xy 0 2.54) (xy 1.016 1.905) (xy 0 1.27))
   (stroke (width 0) (type default)) (fill (type none)))))
 )
-(text "CoCo 3 512K SRAM expansion - compact SMD version" (at 25.40 30.48 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid 5822d1b1-2a58-4d62-93de-36cf2dc22b1b))
+(text "neo-mem-compact: 512K memory board v2 (CoCo 3 512K SRAM)" (at 25.40 30.48 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid 5822d1b1-2a58-4d62-93de-36cf2dc22b1b))
 (text "Fits CN4/CN5/CN6. Remove IC16-IC19 and cut C65, C66 first (as for any 512K upgrade)." (at 25.40 35.56 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid ecdaae76-571f-497f-8496-1fc9dc44e156))
 (text "Write logic (all active low):  ~BHE = ~WE0 XOR 1   ~BLE = ~WE1 XOR 1   ~WE = ~WE1 XOR ~BHE" (at 139.70 30.48 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid 1d1fb187-7fee-4e9f-8c64-5d323fd81af7))
 (text "Invalid ~WE0=~WE1=0 gives ~WE=1 (no write). RAS = ~RAS XOR 1 clocks the row register on ~RAS fall." (at 139.70 35.56 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid bf98a55f-8a44-4156-84b2-4bdc120df14c))

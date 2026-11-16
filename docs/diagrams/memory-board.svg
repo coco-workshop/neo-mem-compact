@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" font-family="Helvetica, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a5568"/></marker>
+    <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c05621"/></marker>
+  </defs>
+  <rect width="960" height="520" rx="14" fill="#ffffff"/>
+  <text x="30" y="38" font-size="20" font-weight="bold" fill="#1a202c">Inside the memory boards</text>
+  <text x="30" y="60" fill="#4a5568">Orange parts are on the 2048K memory board only. Signals starting with / are active low.</text>
+
+  <!-- connector column -->
+  <rect x="30" y="85" width="150" height="410" rx="10" fill="#edf2f7" stroke="#a0aec0"/>
+  <text x="105" y="108" text-anchor="middle" font-weight="bold" fill="#2d3748">From the GIME</text>
+  <text x="105" y="125" text-anchor="middle" font-size="12" fill="#718096">via CN4 / CN5 / CN6</text>
+  <g font-size="13" fill="#1a202c" text-anchor="end">
+    <text x="170" y="174">MA0–MA8</text>
+    <text x="170" y="234">/RAS</text>
+    <text x="170" y="313">/CAS</text>
+    <text x="170" y="359">/WE0, /WE1</text>
+    <text x="170" y="459">D0–D15</text>
+  </g>
+
+  <!-- J3 -->
+  <rect x="210" y="85" width="190" height="62" rx="8" fill="#fffaf0" stroke="#c05621" stroke-width="1.5"/>
+  <text x="305" y="107" text-anchor="middle" fill="#9c4221" font-weight="bold" font-size="13">J3: BANK0, BANK1</text>
+  <text x="305" y="124" text-anchor="middle" fill="#9c4221" font-size="12">from the DAT board</text>
+  <text x="305" y="140" text-anchor="middle" fill="#9c4221" font-size="11">R1/R2 10k pull low when open</text>
+
+  <!-- XOR -->
+  <rect x="250" y="200" width="150" height="190" rx="8" fill="#ffffff" stroke="#4a5568" stroke-width="1.5"/>
+  <text x="325" y="222" text-anchor="middle" font-weight="bold" fill="#2d3748">U2  74AHCT86</text>
+  <text x="325" y="238" text-anchor="middle" font-size="12" fill="#718096">quad XOR</text>
+  <line x1="258" y1="248" x2="392" y2="248" stroke="#e2e8f0"/>
+  <text x="325" y="268" text-anchor="middle" font-size="12" fill="#2d3748">RAS = /RAS XOR 1</text>
+  <line x1="258" y1="330" x2="392" y2="330" stroke="#e2e8f0"/>
+  <text x="325" y="350" text-anchor="middle" font-size="12" fill="#2d3748">/BHE = /WE0 XOR 1</text>
+  <text x="325" y="366" text-anchor="middle" font-size="12" fill="#2d3748">/BLE = /WE1 XOR 1</text>
+  <text x="325" y="382" text-anchor="middle" font-size="12" fill="#2d3748">/WE = /WE1 XOR /BHE</text>
+
+  <!-- latch -->
+  <rect x="470" y="140" width="170" height="120" rx="8" fill="#ffffff" stroke="#2f855a" stroke-width="2"/>
+  <text x="555" y="163" text-anchor="middle" font-weight="bold" fill="#22543d">U3, U4  '574</text>
+  <text x="555" y="180" text-anchor="middle" font-size="12" fill="#2f855a">flip-flops</text>
+  <text x="555" y="205" text-anchor="middle" font-size="12" fill="#2d3748">capture the row</text>
+  <text x="555" y="221" text-anchor="middle" font-size="12" fill="#2d3748">address (and bank)</text>
+  <text x="555" y="237" text-anchor="middle" font-size="12" fill="#2d3748">as /RAS falls</text>
+
+  <!-- SRAM -->
+  <rect x="720" y="120" width="210" height="370" rx="10" fill="#f0fff4" stroke="#2f855a" stroke-width="2"/>
+  <text x="825" y="146" text-anchor="middle" font-weight="bold" fill="#22543d">U1  SRAM</text>
+  <text x="825" y="163" text-anchor="middle" font-size="12" fill="#2f855a">512K: 256K × 16</text>
+  <text x="825" y="179" text-anchor="middle" font-size="12" fill="#c05621">2048K: 1M × 16</text>
+  <g font-size="12" fill="#1a202c">
+    <text x="730" y="204">column address (9 bits)</text>
+    <text x="730" y="229">row address (9 bits)</text>
+    <text x="730" y="254" fill="#c05621">bank (2 bits)</text>
+    <text x="730" y="313">/CE</text>
+    <text x="730" y="349">/BHE, /BLE</text>
+    <text x="730" y="373">/WE</text>
+    <text x="730" y="404">/OE → GND (always on)</text>
+    <text x="730" y="463">D0–D15</text>
+  </g>
+
+  <!-- wires -->
+  <!-- MA to latch and to SRAM column -->
+  <path d="M175,170 H440 V180 H468" fill="none" stroke="#4a5568" stroke-width="2.5" marker-end="url(#a)"/>
+  <path d="M200,170 V75 H690 V200 H718" fill="none" stroke="#4a5568" stroke-width="2.5" marker-end="url(#a)"/>
+  <circle cx="200" cy="170" r="4" fill="#4a5568"/>
+  <!-- bank into latch -->
+  <path d="M400,116 H455 V220 H468" fill="none" stroke="#c05621" stroke-width="2.5" marker-end="url(#o)"/>
+  <!-- latch outputs -->
+  <line x1="642" y1="225" x2="718" y2="225" stroke="#4a5568" stroke-width="2.5" marker-end="url(#a)"/>
+  <line x1="642" y1="250" x2="718" y2="250" stroke="#c05621" stroke-width="2.5" marker-end="url(#o)"/>
+  <!-- RAS -->
+  <line x1="175" y1="230" x2="248" y2="230" stroke="#4a5568" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M400,265 H555 V262" fill="none" stroke="#4a5568" stroke-width="2" marker-end="url(#a)"/>
+  <text x="470" y="282" font-size="11" fill="#718096">clock on /RAS fall</text>
+  <!-- CAS -->
+  <line x1="175" y1="309" x2="718" y2="309" stroke="#4a5568" stroke-width="2" marker-end="url(#a)"/>
+  <text x="420" y="302" font-size="11" fill="#718096">chip enable: active only while the column address is valid</text>
+  <!-- WE -->
+  <line x1="175" y1="355" x2="248" y2="355" stroke="#4a5568" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="402" y1="345" x2="718" y2="345" stroke="#4a5568" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="402" y1="369" x2="718" y2="369" stroke="#4a5568" stroke-width="2" marker-end="url(#a)"/>
+  <!-- data -->
+  <line x1="175" y1="459" x2="718" y2="459" stroke="#4a5568" stroke-width="3" marker-end="url(#a)" marker-start="url(#a)"/>
+  <text x="446" y="450" text-anchor="middle" font-size="12" fill="#718096">16-bit data, straight through</text>
+</svg>

@@ -13,7 +13,7 @@ the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
 |---|---|---|
 | [**512K memory**](boards/512k) | 512K upgrade on its own | CY62146ESL 256K×16 SRAM, 74AHCT86, 2× 74x574 |
 | [**2048K memory**](boards/2048k-mem) | 2 MB of RAM; runs as 512K on its own | CY62167ELL 1M×16 SRAM, 74AHCT86, 2× 74x574 |
-| [**DAT**](boards/dat) | Sits under the CPU and supplies the extra address bits the 2048K memory board needs | ATF1504AS CPLD |
+| [**DAT**](boards/dat) | Sits under the CPU and supplies the extra address bits the 2048K memory board needs; also drives an optional turbo LED | ATF1504AS CPLD |
 
 **Which to build:**
 * **512K:** the 512K memory board. It's the cheapest option.
@@ -21,6 +21,8 @@ the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
   (both headers are G, G, B, B).
   The memory board also runs alone as 512K, so you can fit it first and add the DAT
   board later.
+
+![How the boards fit together](docs/diagrams/system.svg)
 
 | 512K memory | 2048K memory | DAT |
 |---|---|---|
@@ -54,6 +56,8 @@ No jumpers or settings.
 | J1, J2 | Same as the 512K memory board | Same fitting. |
 | J3 | 1×4 header on top: **G, G, B, B** | Bank input from the DAT board (or any source using the same G, G, B, B layout). Pin 1 is the square pad, a ground. |
 
+![Bank cable wiring](docs/diagrams/bank-cable.svg)
+
 * **J3 left open:** runs as 512K (R1/R2 hold the bank lines low).
 * **4-wire cable:** G to G, B to B. The two B wires can go either way round; swapping
   them only reorders memory.
@@ -83,13 +87,17 @@ No jumpers or settings.
 |---|---|
 | `boards/<board>/hardware` | KiCad 7 project (opens in KiCad 7, 8 and 9) |
 | `boards/<board>/fab` | Gerbers + drill (zip), JLCPCB BOM and placement (CPL) files |
-| `boards/<board>/docs` | Schematic PDF, preview, DRC and verification reports |
+| `boards/<board>/docs` | Schematic PDF, 3D renders, flat layout preview, DRC and verification reports |
+| `docs/diagrams` | The diagrams used in this README (SVG) |
 | `boards/dat/cpld` | CPLD logic, testbench, fitted `dat2m_top.jed`, build script |
 | `scripts/512k`, `scripts/mem`, `scripts/dat` | Each board's design definition, generators and independent checker |
 | `scripts/common` | Routing, clean-up, fab-output and rendering tools shared by all boards |
 
 ## How the memory boards work
 Both memory boards replace the CoCo 3's four DRAMs with one 16-bit SRAM.
+
+![Inside the memory boards](docs/diagrams/memory-board.svg)
+
 * The GIME multiplexes row and column addresses onto the same pins. Two '574
   flip-flops (U3/U4) latch the row address on the falling edge of /RAS, clocked
   through one XOR gate (`RAS = ~RAS XOR 1`). That gate delay centres the sampling
@@ -113,7 +121,8 @@ The GIME's MMU registers are only 6 bits wide, so it can only address 512K
 (64 × 8K blocks). Every CoCo 3 2 MB upgrade, from the original Disto kit onward, adds a board on the CPU bus that keeps the missing top two bits
 of each MMU register and supplies them as physical address lines A20:A19.
 
-The CPLD only listens to the CPU bus; the only signals it drives are the two bank lines.
+The CPLD only listens to the CPU bus. The only signals it drives are the two bank lines
+and the turbo LED.
 
 | Register | Kept by the DAT board |
 |---|---|
@@ -133,6 +142,8 @@ fast-mode pattern is video, CPU, and the slow-mode pattern is video, idle, video
 CPU. So the CPU slot is always the one that ends when E falls: "E high" in fast
 mode, "E high and Q low" in slow mode. (This matches Tony Distefano's description of
 the Disto 2-Meg kit.)
+
+![How the DAT board picks the bank for each slot](docs/diagrams/dat-timing.svg)
 
 All of these registers are write-only (reads come from the GIME as usual) and are
 cleared by /RESET, so a reset machine is a plain 512K CoCo 3 until software writes
@@ -164,7 +175,8 @@ through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short th
    as practical. Both headers are **G, G, B, B** (marked on the silkscreen, pin 1 =
    square pad = G): match G to G and B to B. Which B goes to which doesn't matter -
    swapping the two bank lines only reorders memory. A 2-wire cable on the B pins
-   alone also works (the grounds are extra).
+   alone also works (the grounds are extra). See the
+   [bank cable diagram](docs/diagrams/bank-cable.svg).
 
 ## The CPLD (`boards/dat/cpld`)
 * `dat2m.v` holds the logic and `dat2m_tb.v` is its testbench
@@ -257,7 +269,8 @@ isn't deterministic; the committed boards are the ones that were checked.
 The 3D renders (`boards/*/docs/render*.png`) come from
 `python3 scripts/common/render_all.py`, which also needs `rsvg-convert`, `pyvista`
 and `cadquery-ocp`. It downloads KiCad's STEP part models into `~/.cache/kicad-3d`
-the first time.
+the first time. The diagrams in `docs/diagrams` are hand-drawn SVGs, except
+`dat-timing.svg`, which `python3 scripts/common/diagram_timing.py` generates.
 
 ## License and credit
 Derived from **cc3-512k** by Ciaran Anscomb (<https://gitlab.com/sixxie/cc3-512k>):

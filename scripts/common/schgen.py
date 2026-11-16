@@ -128,7 +128,7 @@ class Sheet:
         sch = '''(kicad_sch (version 20230121) (generator eeschema)
 (uuid %s)
 (paper "%s")
-(title_block (title "%s") (rev "1") (comment 1 "%s"))
+(title_block (title "%s") (rev "2") (comment 1 "%s"))
 (lib_symbols
 %s
 )

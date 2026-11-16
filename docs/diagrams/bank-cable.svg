@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="430" viewBox="0 0 900 430" font-family="Helvetica, Arial, sans-serif" font-size="14">
+  <rect width="900" height="430" rx="14" fill="#ffffff"/>
+  <text x="30" y="38" font-size="20" font-weight="bold" fill="#1a202c">Bank cable: DAT J2 to memory J3</text>
+  <text x="30" y="60" fill="#4a5568">Both headers are G, G, B, B with pin 1 (square pad) a ground. Match G to G and B to B.</text>
+
+  <!-- DAT board -->
+  <rect x="30" y="85" width="300" height="300" rx="12" fill="#ebf4ff" stroke="#2b6cb0" stroke-width="2"/>
+  <text x="180" y="110" text-anchor="middle" font-weight="bold" fill="#2b6cb0">DAT board</text>
+  <rect x="50" y="215" width="80" height="80" rx="6" fill="#fff" stroke="#2b6cb0"/>
+  <text x="90" y="250" text-anchor="middle" font-size="12" fill="#2a4365">CPLD</text>
+  <text x="90" y="266" text-anchor="middle" font-size="11" fill="#2a4365">BANK0/1</text>
+  <!-- resistors -->
+  <g stroke="#2a4365" stroke-width="2" fill="#fff">
+    <line x1="130" y1="235" x2="160" y2="235"/><rect x="160" y="227" width="44" height="16" rx="2"/><line x1="204" y1="235" x2="240" y2="235"/>
+    <line x1="130" y1="275" x2="160" y2="275"/><rect x="160" y="267" width="44" height="16" rx="2"/><line x1="204" y1="275" x2="240" y2="275"/>
+  </g>
+  <text x="182" y="222" text-anchor="middle" font-size="11" fill="#2a4365">R1 100 Ω</text>
+  <text x="182" y="300" text-anchor="middle" font-size="11" fill="#2a4365">R2 100 Ω</text>
+  <!-- J2 -->
+  <rect x="240" y="135" width="66" height="170" rx="4" fill="#2d3748"/>
+  <text x="273" y="128" text-anchor="middle" font-weight="bold" font-size="13" fill="#2b6cb0">J2</text>
+  <rect x="280" y="145" width="20" height="20" fill="#d69e2e"/>
+  <circle cx="290" cy="195" r="10" fill="#d69e2e"/>
+  <circle cx="290" cy="235" r="10" fill="#d69e2e"/>
+  <circle cx="290" cy="275" r="10" fill="#d69e2e"/>
+  <g font-size="12" fill="#ffffff" font-weight="bold" text-anchor="middle">
+    <text x="258" y="160">G</text><text x="258" y="200">G</text><text x="258" y="240">B</text><text x="258" y="280">B</text>
+  </g>
+  <text x="273" y="325" text-anchor="middle" font-size="11" fill="#2a4365">pin 1 at top</text>
+  <line x1="130" y1="155" x2="240" y2="155" stroke="#2a4365" stroke-width="2"/>
+  <line x1="200" y1="155" x2="200" y2="195" stroke="#2a4365" stroke-width="2"/>
+  <line x1="200" y1="195" x2="240" y2="195" stroke="#2a4365" stroke-width="2"/>
+  <text x="140" y="148" font-size="11" fill="#2a4365">GND</text>
+
+  <!-- memory board -->
+  <rect x="570" y="85" width="300" height="300" rx="12" fill="#f0fff4" stroke="#2f855a" stroke-width="2"/>
+  <text x="720" y="110" text-anchor="middle" font-weight="bold" fill="#2f855a">2048K memory board</text>
+  <rect x="596" y="135" width="66" height="170" rx="4" fill="#2d3748"/>
+  <text x="629" y="128" text-anchor="middle" font-weight="bold" font-size="13" fill="#2f855a">J3</text>
+  <rect x="600" y="145" width="20" height="20" fill="#d69e2e"/>
+  <circle cx="610" cy="195" r="10" fill="#d69e2e"/>
+  <circle cx="610" cy="235" r="10" fill="#d69e2e"/>
+  <circle cx="610" cy="275" r="10" fill="#d69e2e"/>
+  <g font-size="12" fill="#ffffff" font-weight="bold" text-anchor="middle">
+    <text x="642" y="160">G</text><text x="642" y="200">G</text><text x="642" y="240">B</text><text x="642" y="280">B</text>
+  </g>
+  <line x1="662" y1="155" x2="760" y2="155" stroke="#22543d" stroke-width="2"/>
+  <line x1="700" y1="155" x2="700" y2="195" stroke="#22543d" stroke-width="2"/>
+  <line x1="662" y1="195" x2="700" y2="195" stroke="#22543d" stroke-width="2"/>
+  <text x="725" y="148" font-size="11" fill="#22543d">GND</text>
+  <line x1="662" y1="235" x2="755" y2="235" stroke="#22543d" stroke-width="2"/>
+  <line x1="662" y1="275" x2="755" y2="275" stroke="#22543d" stroke-width="2"/>
+  <rect x="755" y="215" width="105" height="80" rx="6" fill="#fff" stroke="#2f855a"/>
+  <text x="807" y="245" text-anchor="middle" font-size="12" fill="#22543d">'574 latch</text>
+  <text x="807" y="261" text-anchor="middle" font-size="11" fill="#22543d">bank bits</text>
+  <text x="807" y="279" text-anchor="middle" font-size="10" fill="#22543d">R1/R2: 10k to GND</text>
+  <text x="629" y="325" text-anchor="middle" font-size="11" fill="#22543d">pin 1 at top (as drawn)</text>
+
+  <!-- wires -->
+  <g fill="none" stroke-width="4" stroke-linecap="round">
+    <path d="M300,155 C430,150 470,150 600,155" stroke="#1a202c"/>
+    <path d="M300,195 C430,190 470,190 600,195" stroke="#1a202c"/>
+    <path d="M300,235 C430,230 470,230 600,235" stroke="#c05621"/>
+    <path d="M300,275 C430,270 470,270 600,275" stroke="#c05621"/>
+  </g>
+  <text x="450" y="140" text-anchor="middle" font-size="12" fill="#1a202c">G to G (optional)</text>
+  <text x="450" y="300" text-anchor="middle" font-size="12" fill="#c05621">B to B (required; either way round)</text>
+
+  <g font-size="12" fill="#4a5568">
+    <text x="30" y="408">On the memory board J3 is mounted with pin 1 on the right, so its silkscreen reads B B G G. A 2-wire cable on the</text>
+    <text x="30" y="424">two B pins also works. Swapping the two B wires only reorders the 2 MB; the 100 Ω resistors protect a reversed cable.</text>
+  </g>
+</svg>

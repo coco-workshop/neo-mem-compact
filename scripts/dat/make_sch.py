@@ -53,6 +53,7 @@ for x, y, t in [
         (25.4, 50.8, 'J2 = G, G, B, B to the memory board (R1/R2 100R protect against a reversed cable). J4 = turbo LED (+5V, cathode via R3); lit in fast mode.'),
         (25.4, 256.54, 'neo-mem-compact - CC BY-SA 4.0.')]:
     s.note(x, y, t)
-print('labels/no-connects', s.write(os.path.join(OUT, NAME + '.kicad_sch'), os.path.join(OUT, 'neomem.kicad_sym')))
+print('labels/no-connects', s.write(os.path.join(OUT, NAME + '.kicad_sch'), os.path.join(OUT, 'neomem.kicad_sym'),
+                                   'neo-mem-compact (CC BY-SA 4.0)'))
 open(os.path.join(OUT, 'sym-lib-table'), 'w').write(
     '(sym_lib_table\n  (lib (name "neomem")(type "KiCad")(uri "${KIPRJMOD}/neomem.kicad_sym")(options "")(descr "neo-mem symbols"))\n)\n')
