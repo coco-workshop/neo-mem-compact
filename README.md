@@ -25,6 +25,46 @@ checked independently against datasheet pinouts (`boards/*/docs/`). The DAT boar
 CPLD logic passes a cycle-level simulation in both CPU speed modes, both as written
 and after fitting into the chip.
 
+## Connectors, jumpers and features
+
+### 512K board
+| Ref | What | Use |
+|---|---|---|
+| J1 | 24-pin header, **underneath** | Plugs into CN6/CN5 (the vertical socket pair left of the RAM). Pin 1 (square pad) faces the rear ports. |
+| J2 | 12-pin header, **underneath** | Plugs into CN4 (the horizontal socket above the keyboard connector). Pin 1 at the left end. |
+
+No jumpers or settings.
+
+### 2048K memory board
+| Ref | What | Use |
+|---|---|---|
+| J1, J2 | Same as the 512K board | Same fitting. |
+| J3 | 1×4 header on top: **G, G, B, B** | Bank input from the DAT board (or any source using the same G, G, B, B layout). Pin 1 is the square pad, a ground. |
+
+* **J3 left open:** works as a normal 512K board (R1/R2 hold the bank lines low).
+* **4-wire cable:** G to G, B to B. The two B wires can go either way round; swapping
+  them only reorders memory.
+* **2-wire cable:** only the two B pins are needed; the motherboard provides the ground.
+
+### DAT board
+| Ref | What | Use |
+|---|---|---|
+| J1 | 40-pin wire-wrap socket | Sits in the CPU socket, and the 6809/6309 plugs into it. Pin 1 is the square pad, marked "CPU pin 1". |
+| J2 | 1×4 header: **G, G, B, B** | Bank output to memory J3, straight 4-wire cable. Both B lines have 100 Ω protection (R1/R2), so a reversed cable does no harm. |
+| J3 | 2×5 JTAG header | Programs the CPLD with `dat2m_top.jed`. Atmel ATDH1150USB / USB-Blaster layout (1 TCK, 2 GND, 3 TDO, 4 +5V, 5 TMS, 9 TDI, 10 GND). The CoCo must be powered on while programming. |
+| J4 | 1×2 turbo LED header | Pin 1 "+" (+5V) to the LED's anode, pin 2 to its cathode. The 470 Ω resistor (R3) is on the board, so connect the LED directly. |
+| JP1 | 3-pad solder jumper, **on the back** | Mode select, marked "512K JP1 2MB". |
+
+* **JP1 as made (pads 1–2 bridged):** 2MB mode. **To force 512K:** cut the 1–2 bridge
+  and bridge 2–3. Use this for old programs that write junk into the MMU registers'
+  top bits.
+* **Turbo LED:** lights while the CPU runs fast (`POKE 65497,0`, i.e. any write to
+  `$FFD9`). It goes off with `POKE 65496,0` (`$FFD8`) or a reset.
+* **Using 2MB:** after reset the machine is a normal 512K CoCo 3. Software reaches the
+  extra memory by writing bits 7:6 of the MMU registers (`$FFA0`–`$FFAF`); video
+  memory uses `$FF9B` bits 1:0. NitrOS-9 configured for 2MB, or a 2MB memory test,
+  does this for you.
+
 ## Repository layout
 | Path | Contents |
 |---|---|
