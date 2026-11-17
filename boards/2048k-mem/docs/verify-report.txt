@@ -1,6 +1,7 @@
 PASS J1 matches CN6/CN5 traced pinout
 PASS J2 matches CN4 traced pinout
-PASS J3 = G, G, B, B (matches DAT board J2; bank order is free)
+PASS J3 2x2: bank lines on pins 1/3, ground on 2/4 (same as DAT J2; bank order is free)
+PASS J3 bank pins form one row, ground pins the other
 PASS R1/R2 pull BANK0/BANK1 low (no DAT board = bank 0 = 512K)
 PASS U2 power pins
 PASS ~WE0=1 ~WE1=1 -> SRAM ~WE,~BLE,~BHE = (1, 0, 0) (read)

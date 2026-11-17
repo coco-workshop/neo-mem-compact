@@ -60,7 +60,7 @@
   <!-- bank cable -->
   <path d="M272,245 C420,440 600,440 690,305" fill="none" stroke="#c05621" stroke-width="3" marker-end="url(#o)"/>
   <text x="480" y="430" text-anchor="middle" fill="#c05621" font-weight="bold">BANK0, BANK1  (physical A19, A20)</text>
-  <text x="480" y="448" text-anchor="middle" fill="#9c4221" font-size="12">4-wire cable, DAT J2 → memory J3, both G, G, B, B</text>
+  <text x="480" y="448" text-anchor="middle" fill="#9c4221" font-size="12">bank cable, DAT J2 → memory J3, both 2×2 (B pair + G pair)</text>
 
   <!-- LED -->
   <circle cx="62" cy="352" r="7" fill="#f6e05e" stroke="#975a16"/>

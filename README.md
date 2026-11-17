@@ -5,11 +5,6 @@
 > check against datasheets, and simulation of the DAT board's logic. Real hardware may
 > still show timing or fit problems these checks can't catch. Build them at your own
 > risk, order the smallest quantity you can, and treat a first batch as prototypes.
->
-> 🚧 **DAT board: footprint not ready - do not order it yet.** Its CPLD end hangs about
-> 28 mm past the CPU's pin-20 end, which may sit over the ROM (IC2) or a ROM
-> replacement such as a OneROM. The board outline and parts placement need to change
-> before it is built. The two memory boards are not affected.
 
 Compact surface-mount RAM expansions for the Tandy Color Computer 3. They plug into
 the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
@@ -22,8 +17,8 @@ the CN4/CN5/CN6 expansion sockets (and, for 2 MB, the CPU socket).
 
 **Which to build:**
 * **512K:** the 512K memory board. It's the cheapest option.
-* **2 MB:** the 2048K memory board plus the DAT board, joined by a 4-wire cable
-  (both headers are G, G, B, B).
+* **2 MB:** the 2048K memory board plus the DAT board, joined by a short bank cable
+  (both headers are 2×2, laid out like the GIME-Z's bank header).
   The memory board also runs alone as 512K, so you can fit it first and add the DAT
   board later.
 
@@ -44,10 +39,8 @@ datasheet pinouts (`boards/*/docs/`). The DAT board's CPLD logic passes a cycle-
 simulation in both CPU speed modes, both as written and after fitting into the chip.
 Not yet confirmed on real hardware: memory timing on a real GIME (and on faster GIME
 replacements), the DAT board's bank timing against /RAS, and physical fit in the case.
-
-**DAT board footprint: needs changing.** The CPLD overhang past the CPU's pin-20 end
-can clash with the ROM (IC2) or a OneROM, so the outline and placement will be
-reworked. Its logic, pin assignment and schematic are expected to stay the same.
+The DAT board's outline was fitted to an Athena-style board's layout and measured
+parts heights (see [Fitting](#fitting)), not to a real machine.
 
 ## Connectors, jumpers and features
 
@@ -63,20 +56,20 @@ No jumpers or settings.
 | Ref | What | Use |
 |---|---|---|
 | J1, J2 | Same as the 512K memory board | Same fitting. |
-| J3 | 1×4 header on top: **G, G, B, B** | Bank input from the DAT board (or any source using the same G, G, B, B layout). Pin 1 is the square pad, a ground. |
+| J3 | 2×2 header on top: a **B** row and a **G** row | Bank input from the DAT board (or any source with the same layout as the GIME-Z bank header). Pin 1 is the square pad, a B pin. |
 
 ![Bank cable wiring](docs/diagrams/bank-cable.svg)
 
 * **J3 left open:** runs as 512K (R1/R2 hold the bank lines low).
-* **4-wire cable:** G to G, B to B. The two B wires can go either way round; swapping
-  them only reorders memory.
-* **2-wire cable:** only the two B pins are needed; the motherboard provides the ground.
+* **2×2 cable (pin 1 to pin 1):** B to B, G to G. The two B wires can go either way
+  round; swapping them only reorders memory.
+* **Two single leads:** only the two B pins are needed; the motherboard provides the ground.
 
 ### DAT board
 | Ref | What | Use |
 |---|---|---|
 | J1 | 40-pin wire-wrap socket | Sits in the CPU socket, and the 6809/6309 plugs into it. Pin 1 is the square pad, marked "CPU pin 1". |
-| J2 | 1×4 header: **G, G, B, B** | Bank output to memory J3, straight 4-wire cable. Both B lines have 100 Ω protection (R1/R2), so a reversed cable does no harm. |
+| J2 | 2×2 header: a **B** column (board edge) and a **G** column | Bank output to memory J3. Pin 1 is the square pad, a B pin. Both B lines have 100 Ω protection (R1/R2), so a plug turned round does no harm. |
 | J3 | 2×5 JTAG header | Programs the CPLD with `dat2m_top.jed`. Atmel ATDH1150USB / USB-Blaster layout (1 TCK, 2 GND, 3 TDO, 4 +5V, 5 TMS, 9 TDI, 10 GND). The CoCo must be powered on while programming. |
 | J4 | 1×2 turbo LED header | Pin 1 "+" (+5V) to the LED's anode, pin 2 to its cathode. The 470 Ω resistor (R3) is on the board, so connect the LED directly. |
 | JP1 | 3-pad solder jumper, **on the back** | Mode select, marked "512K JP1 2MB". |
@@ -176,15 +169,22 @@ through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short th
    horizontal socket above the keyboard connector), with pin 1 at the left end.
 2. **DAT board (2 MB only):** the CPU must be socketed. Pull the 6809/6309, plug the
    DAT board into the CPU socket with pin 1 (square pad, marked "CPU pin 1")
-   matching the socket's pin 1, then plug the CPU into the DAT board. The board is the
-   CPU's width along its length; the CPLD end hangs about 28 mm past the CPU's pin-20
-   end and is about 3 mm wider on the pin-21 side (22.6 × 78.7 mm overall). **This
-   footprint is being changed:** the overhang can sit over the ROM (IC2) or a OneROM.
-3. Link DAT **J2** to memory **J3** with a 4-wire female–female cable, kept as short
-   as practical. Both headers are **G, G, B, B** (marked on the silkscreen, pin 1 =
-   square pad = G): match G to G and B to B. Which B goes to which doesn't matter -
-   swapping the two bank lines only reorders memory. A 2-wire cable on the B pins
-   alone also works (the grounds are extra). See the
+   matching the socket's pin 1, then plug the CPU into the DAT board. The board is
+   30.1 × 65.5 mm and sits about 5 mm up, on top of the CPU socket:
+   * Over the socket it is the CPU's width, with a slim tab (8.5 mm wide) on the
+     pin-1 side holding the turbo LED (J4), bank (J2) and JTAG (J3) headers. The tab
+     starts about halfway along the socket, clear of the tall caps near the pin-1
+     end (C2, C56).
+   * The CPLD end reaches 16 mm past the CPU's pin-20 end and is 3.8 mm wider on
+     the pin-21 side. On the Athena layout it stays clear of the parts around it:
+     about 3.7 mm to C4, 7.2 mm to a OneROM in the ROM socket, 7.9 mm to C55.
+   * Anything under the board taller than the socket (5 mm) must be moved or laid
+     flat, for example a capacitor added just past the CPU's pin-20 end.
+3. Link DAT **J2** to memory **J3** with a short 2×2 female–female cable wired pin 1
+   to pin 1. Both headers have a **B** pair and a **G** pair (marked on the
+   silkscreen; pin 1 = square pad = B): match B to B and G to G. Which B goes to
+   which doesn't matter - swapping the two bank lines only reorders memory. Two
+   single leads on the B pins alone also work (the grounds are extra). See the
    [bank cable diagram](docs/diagrams/bank-cable.svg).
 
 ## The CPLD (`boards/dat/cpld`)
@@ -210,8 +210,6 @@ through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short th
 ## Ordering (JLCPCB)
 **These are untested prototypes** (see the warning at the top): order the minimum
 quantity, and expect that a first build may need fixes.
-
-**Don't order the DAT board yet** - its footprint is being changed (see Status).
 
 Each board has its own Gerbers, BOM and CPL file in `boards/<board>/fab/`. Upload the
 gerbers zip (2 layers, 1.6 mm), then the BOM and CPL for assembly. Check part
@@ -239,7 +237,7 @@ silkscreen triangle. Ordering all boards together shares shipping.
   1.0 mm for the 0.64 mm square tails.
 
 **Hand-solder** all through-hole parts: memory board headers J1/J2 on the
-**bottom** (J3, 1×4, on top, 2048K memory board only), and the DAT board's J1, J2 (1×4),
+**bottom** (J3, 2×2, on top, 2048K memory board only), and the DAT board's J1, J2 (2×2),
 J3 (2×5, JTAG) and J4 (1×2, turbo LED).
 
 ## First power-up

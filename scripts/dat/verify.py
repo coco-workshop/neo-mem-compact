@@ -34,7 +34,11 @@ check(all(net[('U1', p)] == n for p, n in jt.items()), 'JTAG pins 1/7/26/32 = TD
 hdr = {1: 'TCK', 2: 'GND', 3: 'TDO', 4: '+5V', 5: 'TMS', 9: 'TDI', 10: 'GND'}
 check(all(net[('J3', p)] == n for p, n in hdr.items()) and all(net[('J3', p)] is None for p in (6, 7, 8)),
       'J3 follows the 10-pin Atmel ATDH1150USB / USB-Blaster layout')
-check([net[('J2', i)] for i in (1, 2, 3, 4)] == ['GND', 'GND', 'B0', 'B1'], 'J2 = G, G, B, B (matches memory board J3)')
+check([net[('J2', i)] for i in (1, 2, 3, 4)] == ['B0', 'GND', 'B1', 'GND'], 'J2 2x2: B0/B1 on pins 1/3, ground on 2/4 (same as memory board J3)')
+_j2 = {int(p.GetNumber()): p.GetPosition().x for p in b.FindFootprintByReference('J2').Pads()}
+_j1x = b.FindFootprintByReference('J1').Pads()[0].GetPosition().x
+check(_j2[1] == _j2[3] and _j2[2] == _j2[4] and _j2[1] < _j2[2] < _j1x,
+      'J2 bank pins are on the outer column (away from the CPU), ground pins inner - like the GIME-Z')
 check({net[('R1', 1)], net[('R1', 2)]} == {'BANK0', 'B0'} and {net[('R2', 1)], net[('R2', 2)]} == {'BANK1', 'B1'},
       'BANK0/BANK1 reach J2 only through series resistors R1/R2')
 check([net[('J4', 1)], net[('J4', 2)]] == ['+5V', 'LED_K'] and {net[('R3', 1)], net[('R3', 2)]} == {'LED_K', 'LED_FASTn'},

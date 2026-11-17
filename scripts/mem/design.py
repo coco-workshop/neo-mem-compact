@@ -17,10 +17,11 @@ J1 = {1: 'GND', 2: '+5V', 3: 'D9', 4: 'D8', 5: 'D10', 6: 'D11', 7: 'D14', 8: 'D1
       20: 'D7', 21: 'D5', 22: 'D4', 23: 'D6', 24: 'GND'}
 J2 = {1: 'GND', 2: '~RAS', 3: 'Z0', 4: 'Z1', 5: 'Z2', 6: 'Z3', 7: 'Z6', 8: 'Z5',
       9: 'Z4', 10: 'Z7', 11: 'Z8', 12: 'GND'}
-# G, G, B, B from the DAT board's J2 (straight 4-wire cable). Which bank line is A19 and
-# which is A20 doesn't matter - swapping them only reorders memory - so the header is
-# mounted pin 1 to the right, putting the bank pins where the routing needs them.
-J3 = {1: 'GND', 2: 'GND', 3: 'BANK1', 4: 'BANK0'}
+# Bank input: a 2x2 header with the same layout as the GIME-Z's bank header and the DAT
+# board's J2 - one row carries the two bank lines, the other row is ground. Which bank line
+# is A19 and which is A20 doesn't matter (swapping them only reorders memory), so the
+# header is turned to put the bank pins where the routing needs them.
+J3 = {1: 'BANK1', 2: 'GND', 3: 'BANK0', 4: 'GND'}
 
 U2 = {1: '+5V', 2: '~WE0', 3: '~BHE',
       4: '~BHE', 5: '~WE1', 6: '~WE',
@@ -66,7 +67,7 @@ PARTS = {
     'U4': dict(value='74AHCT574PW', fp='Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm', pins=U4),
     'J1': dict(value='To CN6 (1-12) / CN5 (13-24)', fp='Connector_PinHeader_2.54mm:PinHeader_1x24_P2.54mm_Vertical', pins=J1),
     'J2': dict(value='To CN4', fp='Connector_PinHeader_2.54mm:PinHeader_1x12_P2.54mm_Vertical', pins=J2),
-    'J3': dict(value='BANK in (G G B B)', fp='Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical', pins=J3),
+    'J3': dict(value='BANK in 2x2 (B row / G row)', fp='Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical', pins=J3),
     'R1': dict(value='10k', fp='Resistor_SMD:R_0402_1005Metric', pins={1: 'BANK0', 2: 'GND'}),
     'R2': dict(value='10k', fp='Resistor_SMD:R_0402_1005Metric', pins={1: 'BANK1', 2: 'GND'}),
 }

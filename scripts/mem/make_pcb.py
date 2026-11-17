@@ -20,7 +20,7 @@ PLACE = {
     'U3': (104.9, 123.0, None, False),      # '574s: D side faces J2 (down), Q side faces the SRAM
     'U4': (112.3, 123.0, None, False),
     'U2': (109.0, 86.6, 0, False),
-    'J3': (129.12, 131.6, -90, False),      # G, G, BANK1, BANK0 -> pin 1 at the right, pins run -x
+    'J3': (124.04, 131.6, -90, False),      # 2x2: bank row (pins 1/3) on top, ground row below
     'R1': (121.5, 128.2, 90, False),
     'R2': (124.04, 128.2, 90, False),
     'C1': (108.25, 92.2, 90, False),
@@ -175,9 +175,13 @@ def main():
         r = fps[ref].Reference(); r.SetLayer(pcbnew.B_SilkS)
         r.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
     fps['J3'].Reference().SetLayer(pcbnew.F_Fab)
-    lab = pcbnew.PCB_TEXT(board); lab.SetText('B  B  G  G'); lab.SetLayer(pcbnew.F_SilkS)
-    lab.SetPosition(pcbnew.VECTOR2I(mm(125.31), mm(135.4)))
-    lab.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8))); lab.SetTextThickness(mm(0.12)); board.Add(lab)
+    # J3 pads 1.5 mm so the ground row clears the bus running along the bottom edge
+    for p in fps['J3'].Pads():
+        p.SetSize(pcbnew.VECTOR2I(mm(1.5), mm(1.5)))
+    for s_, y_ in (('B', 131.6), ('G', 134.14)):
+        lab = pcbnew.PCB_TEXT(board); lab.SetText(s_); lab.SetLayer(pcbnew.F_SilkS)
+        lab.SetPosition(pcbnew.VECTOR2I(mm(126.2), mm(y_)))
+        lab.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8))); lab.SetTextThickness(mm(0.12)); board.Add(lab)
     # Silkscreen title
     t = pcbnew.PCB_TEXT(board)
     t.SetText('neo-mem-2048k-compact\nCoCo 3 2MB SRAM v2')

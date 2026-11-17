@@ -5,4 +5,4 @@
  ["10k 1% 0402", "R1,R2", "R_0402_1005Metric", "C25744"],
  ["1x24 2.54mm pin header", "J1", "PinHeader_1x24", "THT"],
  ["1x12 2.54mm pin header", "J2", "PinHeader_1x12", "THT"],
- ["1x4 2.54mm pin header", "J3", "PinHeader_1x04", "THT"]]
+ ["2x2 2.54mm pin header (bank row / ground row)", "J3", "PinHeader_2x02", "THT"]]

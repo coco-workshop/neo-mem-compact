@@ -2,6 +2,7 @@
 """Build the DAT board (unrouted) from design.py; also writes the CPLD pin constraints."""
 import json, os, sys
 import numpy as np
+import re
 import pcbnew
 from scipy.optimize import linear_sum_assignment
 
@@ -15,22 +16,30 @@ import design as D
 LIB = '/usr/share/kicad/footprints/'
 mm = pcbnew.FromMM
 X0, Y0 = 100.0, 60.0                       # CPU pin 1
+# Layout "B2": the CPLD sits past the CPU's pin-20 end (16 mm), the headers in a slim tab
+# beside pins 10-20 on the pin-1 side. The CPLD end is 3.8 mm wider than the socket on the
+# pin-21 side and angles out on the pin-1 side: the CPU signals reach the CPLD down both
+# sides, and it would not route with less room there. Both long edges beside the CPU are flush with the
+# CPU socket and the pin-1 end stops inside the socket end, so the board clears the parts
+# that stand next to the socket on the motherboard (see README "Fitting").
 PLACE = {
     'J1': (X0, Y0, 0),
-    'U1': (X0 + 7.62, Y0 + 58.2, 0),
-    'J3': (X0 + 1.3, Y0 + 72.6, 90),       # 2x5 JTAG: odd pins along +x, even row above
-    'J2': (X0 + 15.24, Y0 + 66.7, 0),      # 1x4 bank header (G G B B), runs down +y
-    'J4': (X0 + 18.9, Y0 + 66.7, 0),       # 1x2 turbo LED header beside it
-    'R1': (X0 + 18.9, Y0 + 72.2, 90),
-    'R2': (X0 + 18.9, Y0 + 74.2, 90),
-    'R3': (X0 + 12.85, Y0 + 66.6, 90),
-    'JP1': (X0 + 7.62, Y0 + 51.6, 0),      # back side, between the CPU rows
+    'U1': (X0 + 7.62, Y0 + 57.0, 0),
+    'J4': (X0 - 7.24, Y0 + 26.0, 90),      # 1x2 turbo LED header, lying across the tab
+    'J2': (X0 - 7.24, Y0 + 29.6, 0),       # 2x2 bank header: pins 1/3 (B) outer, 2/4 (G) inner
+    'J3': (X0 - 7.24, Y0 + 37.0, 0),       # 2x5 JTAG, odd pins on the outer column
+    'R1': (X0 + 18.6, Y0 + 58.0, 90),
+    'R2': (X0 + 18.6, Y0 + 60.2, 90),
+    'R3': (X0 + 0.2, Y0 + 62.5, 90),
+    'JP1': (X0 + 7.62, Y0 + 51.6, 0),      # back side, under the CPLD end
 }
-XR, YB = X0 + 20.3, Y0 + 76.4             # right edge of the CPLD end, bottom edge
-# Same width as the CPU along its length; the CPLD end widens to the right for J4.
-OUTLINE = [(X0 - 2.2, Y0 - 1.2), (X0 - 1.2, Y0 - 2.2), (X0 + 16.44, Y0 - 2.2), (X0 + 17.44, Y0 - 1.2),
-           (X0 + 17.44, Y0 + 50.0), (X0 + 18.44, Y0 + 51.0), (XR - 1.0, Y0 + 51.0), (XR, Y0 + 52.0),
-           (XR, YB - 1.0), (XR - 1.0, YB), (X0 - 1.2, YB), (X0 - 2.2, YB - 1.0)]
+# decoupling caps whose natural spot (just outside the VCC pin) is off the board
+CAP_PLACE = {17: (X0 + 0.0, Y0 + 55.5, 90), 41: (X0 + 0.0, Y0 + 51.6, 90)}
+_L, _R, _T, _B = X0 - 1.27, X0 + 16.51, Y0 - 1.2, Y0 + 48.26 + 16.0
+_TW, _TT, _TB, _XR = X0 - 9.77, Y0 + 23.0, Y0 + 49.46, X0 + 20.3
+OUTLINE = [(_L, _T), (_R - 0.5, _T), (_R, _T + 0.5), (_R, _TB), (_XR - 0.5, _TB), (_XR, _TB + 0.5),
+           (_XR, _B - 0.5), (_XR - 0.5, _B), (X0 - 3.0, _B), (_TW, _TB + 2.5),
+           (_TW, _TT + 0.5), (_TW + 0.5, _TT), (_L, _TT)]
 
 
 def padpos(fp, num):
@@ -75,7 +84,9 @@ def main():
     for c, vp in zip(D.CAPS, D.CPLD_VCC):
         px, py = padpos(U, vp)
         dx, dy = px - cx, py - cy
-        if abs(dx) > abs(dy):   # left/right side: cap vertical, outside the pad
+        if vp in CAP_PLACE:
+            x, y, rot = CAP_PLACE[vp]
+        elif abs(dx) > abs(dy):   # left/right side: cap vertical, outside the pad
             x, y, rot = px + (1.75 if dx > 0 else -1.75), py, 90 if dx > 0 else -90
         else:
             x, y, rot = px, py + (1.75 if dy > 0 else -1.75), 0 if dy > 0 else 180
@@ -86,7 +97,7 @@ def main():
     # CPLD pin assignment: Hungarian on distance from each signal's source pad
     def src(sig):
         if sig in ('BANK0', 'BANK1'):
-            return padpos(fps['J2'], {'BANK0': 3, 'BANK1': 4}[sig])
+            return padpos(fps['J2'], {'BANK0': 1, 'BANK1': 3}[sig])
         if sig == 'LED_FASTn':
             return padpos(fps['J4'], 2)
         if sig == 'EN2M':
@@ -140,14 +151,20 @@ def main():
         t.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y))); t.SetTextAngleDegrees(angle)
         t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size))); t.SetTextThickness(mm(size * 0.15))
         board.Add(t)
-    text('neo-mem-2048k-compact', X0 + 7.62, Y0 + 20.0, 1.0, 90)
+    text('neo-mem-compact', X0 + 7.62, Y0 + 20.0, 1.0, 90)
     text('DAT board v2', X0 + 9.5, Y0 + 20.0, 1.0, 90)
     text('CPU pin 1', X0 + 5.6, Y0 + 0.0, 0.8)
-    text('JTAG', X0 + 6.4, Y0 + 74.9, 0.8, back=True)
-    for i, t_ in enumerate(('G', 'G', 'B', 'B')):                 # back silk beside J2
-        text(t_, X0 + 13.6, Y0 + 69.24 + 2.54 * (i - 1), 0.8, back=True)
-    text('LED', X0 + 18.9, Y0 + 64.4, 0.8, back=True)
-    text('+', X0 + 17.4, Y0 + 63.9, 0.8, back=True)
+    # header labels beside the tab's headers (outside the CPU socket, so they stay visible)
+    text('LED', X0 - 2.45, Y0 + 26.0, 0.8, 90)
+    text('BANK', X0 - 2.45, Y0 + 30.87, 0.8, 90)
+    text('JTAG', X0 - 2.45, Y0 + 42.08, 0.8, 90)
+    text('+', X0 - 9.0, Y0 + 26.0, 0.8)          # J4 pin 1 = +5V
+    text('B', X0 - 9.0, Y0 + 30.87, 0.8)         # J2 outer column = bank lines
+    text('1', X0 - 9.0, Y0 + 37.0, 0.8)          # JTAG pin 1
+    # pinouts on the back, mirrored so they read correctly from below
+    text('LED + K', X0 - 5.97, Y0 + 24.2, 0.8, back=True)
+    text('B  G', X0 - 5.97, Y0 + 27.8, 0.8, back=True)
+    text('JTAG', X0 - 2.45, Y0 + 42.08, 0.8, 90, back=True)
     text('512K  JP1  2MB', X0 + 7.62, Y0 + 49.6, 0.8, back=True)  # reads correctly from the back: pad 1 (2MB) is on the right
 
     ds = board.GetDesignSettings()
@@ -155,6 +172,13 @@ def main():
     ds.m_ViasMinSize = mm(0.5); ds.m_MinThroughDrill = mm(0.3); ds.m_CopperEdgeClearance = mm(0.3)
     path = os.path.join(OUT, NAME + '.kicad_pcb')
     board.Save(path)
+    # J1's silkscreen outline would hang over the board's pin-1 end (the socket covers it
+    # anyway): drop it from the saved file (pcbnew's footprint item list isn't iterable here)
+    s = open(path).read()
+    i = s.index('(fp_text reference "J1"'); i = s.rindex('\n  (footprint ', 0, i)
+    j = s.index('\n  (footprint ', i + 5) if '\n  (footprint ' in s[i + 5:] else len(s)
+    blk = re.sub(r'\n    \((?:fp_line|fp_arc|fp_rect)\s[^\n]*?(?:\n[^\n]*?)*?\(layer "F\.SilkS"\)[^\n]*', '', s[i:j])
+    open(path, 'w').write(s[:i] + blk + s[j:])
 
     # fitter pin constraints, generated from the same assignment the board uses
     sigpin = {v: k for k, v in a.items()}

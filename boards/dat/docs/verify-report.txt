@@ -5,7 +5,8 @@ PASS E on GCLK1 (pin 37), the global clock
 PASS /RESET on GCLR (pin 39), the global clear
 PASS JTAG pins 1/7/26/32 = TDI/TMS/TCK/TDO
 PASS J3 follows the 10-pin Atmel ATDH1150USB / USB-Blaster layout
-PASS J2 = G, G, B, B (matches memory board J3)
+PASS J2 2x2: B0/B1 on pins 1/3, ground on 2/4 (same as memory board J3)
+PASS J2 bank pins are on the outer column (away from the CPU), ground pins inner - like the GIME-Z
 PASS BANK0/BANK1 reach J2 only through series resistors R1/R2
 PASS turbo LED header J4: +5V, cathode through R3 to the CPLD
 PASS JP1: EN2M on the common pad, +5V (2MB, bridged as made) and GND (512K) either side
@@ -15,6 +16,6 @@ PASS CPLD drives only BANK0/BANK1 and the LED - never the CPU bus
 PASS no logic signal on a JTAG pin
 PASS one 100 nF cap per CPLD VCC pin
 PASS schematic netlist matches PCB pad-for-pad (117 pads)
-     board 22.6 x 78.7 mm
+     board 30.1 x 65.5 mm
 
 ALL CHECKS PASSED

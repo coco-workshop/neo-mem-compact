@@ -32,13 +32,14 @@ conn = lambda n: box(4 * 2.54, [(i, str(i), 'passive') for i in range(1, n + 1)]
 
 s = Sheet(NAME, 'neomem', 'neo-mem-compact: 2048K memory board v2')
 s.add_box('SRAM_1Mx16', sram); s.add_box('74AHCT86', xor); s.add_box('74AHCT574', ff)
-for n in (24, 12, 4):
+for n in (24, 12):
     s.add_box('Conn_01x%02d' % n, conn(n))
+s.add_box('Conn_02x02', box(3 * 2.54, [(1, '1 B', 'passive'), (3, '3 B', 'passive')], [(2, '2 G', 'passive'), (4, '4 G', 'passive')]))
 s.add_two_pin('C', 'C'); s.add_two_pin('R', 'R')
 P = D.PARTS
 s.place('J1', 'Conn_01x24', 40.64, 96.52, P['J1']['value'], P['J1']['fp'], D.J1)
 s.place('J2', 'Conn_01x12', 40.64, 162.56, P['J2']['value'], P['J2']['fp'], D.J2)
-s.place('J3', 'Conn_01x04', 40.64, 220.98, P['J3']['value'], P['J3']['fp'], D.J3)
+s.place('J3', 'Conn_02x02', 40.64, 220.98, P['J3']['value'], P['J3']['fp'], D.J3)
 s.place('U2', '74AHCT86', 116.84, 71.12, P['U2']['value'], P['U2']['fp'], D.U2)
 s.place('U3', '74AHCT574', 116.84, 147.32, P['U3']['value'], P['U3']['fp'], D.U3)
 s.place('U4', '74AHCT574', 116.84, 190.5, P['U4']['value'], P['U4']['fp'], D.U4)
@@ -52,7 +53,7 @@ s.place('#FLG02', 'PWR_FLAG', 299.72, 193.04, 'PWR_FLAG', '', {1: 'GND'})
 for x, y, t in [
         (25.4, 30.48, 'neo-mem-compact: 2048K memory board v2 (CoCo 3 2 MB SRAM, plugs into CN4/CN5/CN6)'),
         (25.4, 35.56, 'Remove IC16-IC19 and cut C65, C66 first (as for any 512K upgrade).'),
-        (25.4, 40.64, 'J3 (G, G, B, B) takes BANK0/BANK1 (physical A19/A20) from the DAT board. Unconnected: R1/R2 pull low = 512K mode.'),
+        (25.4, 40.64, 'J3 (2x2, bank row + ground row, same layout as the GIME-Z and DAT J2) takes BANK0/BANK1 (physical A19/A20). Unconnected: R1/R2 pull low = 512K mode.'),
         (160.02, 30.48, 'Write logic (active low): ~BHE = ~WE0 XOR 1   ~BLE = ~WE1 XOR 1   ~WE = ~WE1 XOR ~BHE'),
         (160.02, 35.56, 'RAS = ~RAS XOR 1 clocks U3/U4: row address (9 bits) and BANK1:0 latched on the falling edge of ~RAS.'),
         (160.02, 40.64, 'SRAM ~CE1 = ~CAS, CE2 = BYTE = 1 (x16), ~OE = 0. Address/data pin order is permuted for routing.'),
