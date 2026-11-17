@@ -3,10 +3,11 @@
 
 Usage: check_pins.py <dat.kicad_pcb> <cpld dir>
 
-Reads the fitter's pin list (dat2m_top.io) and macrocell table (dat2m_top.fit)
-and the PCB, and fails unless:
-  * the only output pins are BANK0, BANK1 and LED_FASTn, each with its output
-    enable listed in the macrocell table, and none of them is on a CPU-socket net;
+Reads the fitter report (dat2m_top.fit, committed next to the .jed) and the PCB,
+and fails unless:
+  * the only pins with an output enable are BANK0, BANK1 and LED_FASTn (plus TDO,
+    which only drives while a JTAG programmer is connected), and none of them is on
+    a CPU-socket net;
   * every CPLD pin wired to a CPU-socket (J1) signal is fitted as an input;
   * every I/O pin the fitter left unused (it reports these as "must be
     unconnected") has no net on the PCB.
@@ -28,23 +29,34 @@ def norm(n):
 
 def main(pcb, cdir):
     fails, notes = [], []
+    # Macrocell table: "MC19  14   on   LED_FASTn C----  ..." / "MC0   40        RW        INPUT ..."
     io = {}
-    for m in re.finditer(r'"(\w+)"\s*:\s*(INPUT|OUTPUT|BIDIR)\w*_PIN\s*=\s*(\d+)', open(f'{cdir}/dat2m_top.io').read()):
-        io[int(m.group(3))] = (m.group(1), m.group(2))
-    mc = {}
+    # fixed columns, as in the header "MCell Pin# Oe   PinDrive  DCERP  FBDrive ..."
     for line in open(f'{cdir}/dat2m_top.fit'):
-        m = re.match(r'MC\d+\s+(\d+)\s+(on|--)?\s*(\S+)\s+(\S+)', line)
-        if m and m.group(1) != '0':
-            mc[int(m.group(1))] = (m.group(3), m.group(2) or '', m.group(4))
+        if not re.match(r'MC\d+\s+\d+', line):
+            continue
+        pin = int(line[5:10])
+        oe, name, drive = line[11:16].strip(), line[16:26].strip(), line[26:33].strip()
+        if pin == 0 or name in ('', '--'):
+            continue
+        if drive == 'INPUT':
+            kind = 'INPUT'
+        elif oe == 'on':
+            kind = 'OUTPUT'
+        elif name in JTAG:
+            kind = 'JTAG'
+        else:
+            kind = 'UNKNOWN'
+        io[pin] = (name, kind)
+    if not io:
+        fails.append('no macrocell table found in dat2m_top.fit')
+    for p, (n, k) in io.items():
+        if k == 'UNKNOWN':
+            fails.append(f'pin {p} {n}: neither an input nor an enabled output ({k})')
 
-    outs = {n for n, k in io.values() if k != 'INPUT'}
+    outs = {n for n, k in io.values() if k == 'OUTPUT'}
     if outs != ALLOWED_OUT:
         fails.append(f'output pins are {sorted(outs)}, expected {sorted(ALLOWED_OUT)}')
-    for p, (n, k) in io.items():
-        if k == 'OUTPUT' and mc.get(p, ('', ''))[1] != 'on':
-            fails.append(f'pin {p} {n}: output enable not "on" in the macrocell table')
-        if k == 'INPUT' and p in mc and mc[p][2] != 'INPUT' and n not in JTAG:
-            fails.append(f'pin {p} {n}: .io says INPUT but the macrocell table says {mc[p][2]}')
 
     b = pcbnew.LoadBoard(pcb)
     fp = {f.GetReference(): f for f in b.GetFootprints()}

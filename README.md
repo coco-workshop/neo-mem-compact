@@ -89,7 +89,7 @@ No jumpers or settings.
 |---|---|
 | `boards/<board>/hardware` | KiCad 7 project (opens in KiCad 7, 8 and 9) |
 | `boards/<board>/fab` | Gerbers + drill (zip), JLCPCB BOM and placement (CPL) files |
-| `boards/<board>/docs` | Schematic PDF, 3D renders, flat layout preview, DRC and verification reports |
+| `boards/<board>/docs` | Schematic PDF, 3D renders, flat layout preview, DRC and verification reports (plus the DAT board's bus pin check) |
 | `docs/diagrams` | The diagrams used in this README (SVG) |
 | `boards/dat/cpld` | CPLD logic, testbench, fitted `dat2m_top.jed`, build script |
 | `scripts/512k`, `scripts/mem`, `scripts/dat` | Each board's design definition, generators and independent checker |
@@ -204,8 +204,8 @@ in backwards can't short them.
   fitter's gate-level output passes the same 129-check testbench as the source.
 * To rebuild: `ATF15XX=/path/to/atf15xx_yosys boards/dat/cpld/build.sh`. It
   synthesises, fits, and re-runs the testbench on the fitted netlist.
-* **Bus safety check:** `scripts/dat/check_pins.py` reads the fitter's pin list and
-  the PCB and fails unless BANK0, BANK1 and the turbo LED are the only outputs,
+* **Bus safety check:** `scripts/dat/check_pins.py` reads the fitter report
+  (`dat2m_top.fit`) and the PCB and fails unless BANK0, BANK1 and the turbo LED are the only outputs,
   every CPLD pin wired to the CPU socket is an input, and the pins the fitter
   left unused are unconnected. `build.sh` runs it after every fit; the result for
   the committed `.jed` is in `boards/dat/docs/pin-check.txt`.
@@ -238,7 +238,7 @@ silkscreen triangle. Ordering all boards together shares shipping.
 **DAT board:**
 * **U1:** ATF1504AS-10AU44. LCSC (C219301) is usually out of stock and expensive;
   DigiKey, Mouser and RS stock it for about $5. Untick U1 in JLC's BOM, let JLC fit
-  only the four 0402 caps, and hand-solder the CPLD (TQFP-44, 0.8 mm pitch).
+  the 0402 capacitors and resistors, and hand-solder the CPLD (TQFP-44, 0.8 mm pitch).
 * **R1, R2** 100 Ω (C25076) and **R3** 470 Ω (C25117), all JLC basic parts.
 * **J1** is a 40-pin **wire-wrap** DIP socket (long square tails, e.g. Mill-Max
   123-43-640-41-001000), mounted on top with its tails pushed through the board and
@@ -280,8 +280,9 @@ python3 scripts/common/fab.py boards/2048k-mem/hardware neo-mem-2048k-mem \
   boards/2048k-mem/fab boards/2048k-mem/docs scripts/mem/bom.json
 ```
 The 512K memory and DAT boards work the same way (the DAT checker also takes
-`boards/dat/cpld/dat2m_top.v`, and `finish.py` takes `JP1` as a keepout). The fine
-pitches need the 0.15 mm default clearance set in each `.kicad_pro`. Autorouting
+`boards/dat/cpld/dat2m_top.v`, and `finish.py` takes `JP1` as a keepout). The memory
+boards' fine pitches need the 0.15 mm default clearance set in their `.kicad_pro`
+(the DAT board uses 0.2 mm). Autorouting
 isn't deterministic; the committed boards are the ones that were checked.
 
 The 3D renders (`boards/*/docs/render*.png`) come from
