@@ -1,0 +1,4 @@
+CPLD pins on CPU-socket nets: 25, all inputs
+Output pins: ['BANK0', 'BANK1', 'LED_FASTn']
+Unused I/O pins (unconnected): [15, 19, 20]
+PIN DIRECTION CHECK PASSED

@@ -158,8 +158,12 @@ the CPU runs fast: any write to `$FFD9` turns it on; `$FFD8` or /RESET turns it 
 It ships bridged 1–2 (2 MB). Re-bridge it 2–3 to force bank 0, for any old program
 that writes junk into bits 7:6 of the MMU registers.
 
-The DAT board doesn't buffer or protect the CPU bus. Its two bank outputs pass
-through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short them.
+The DAT board doesn't buffer or protect the CPU bus. It only listens: every CPLD pin
+on the CPU bus is an input, the four clock and control lines (E, Q, R/W, /RESET) use
+input-only pins that can't drive at all, and the bus safety check (see
+[The CPLD](#the-cpld-boardsdatcpld)) rejects any build that would make a bus pin an
+output. Its two bank outputs pass through 100 Ω resistors (R1/R2), so a cable plugged
+in backwards can't short them.
 
 ## Fitting
 1. **Memory board (either size):** remove the four DRAMs (IC16–IC19) and cut C65 and
@@ -200,6 +204,11 @@ through 100 Ω resistors (R1/R2), so a cable plugged in backwards can't short th
   fitter's gate-level output passes the same 129-check testbench as the source.
 * To rebuild: `ATF15XX=/path/to/atf15xx_yosys boards/dat/cpld/build.sh`. It
   synthesises, fits, and re-runs the testbench on the fitted netlist.
+* **Bus safety check:** `scripts/dat/check_pins.py` reads the fitter's pin list and
+  the PCB and fails unless BANK0, BANK1 and the turbo LED are the only outputs,
+  every CPLD pin wired to the CPU socket is an input, and the pins the fitter
+  left unused are unconnected. `build.sh` runs it after every fit; the result for
+  the committed `.jed` is in `boards/dat/docs/pin-check.txt`.
 * In `dat2m_top.v` the E and Q inputs are called `ECLK`/`QCLK`: top-level ports named
   `E` or `Q` clash with cell pin names, and `fit1504` then rejects the netlist.
 * Program `dat2m_top.jed` through J3 (10-pin, Atmel ATDH1150USB / USB-Blaster layout)

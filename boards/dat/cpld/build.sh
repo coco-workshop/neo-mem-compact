@@ -15,4 +15,8 @@ grep -q "^\$Device TQFP44 fits" dat2m_top.fit || { echo "FIT FAILED - see dat2m_
 sed 's/^\tPRIM_DFFE (/\tPRIM_DFFE p0 (/' dat2m_top.vo > postfit.v
 iverilog -g2012 -o postfit.vvp dat2m_tb.v postfit_wrap.v postfit.v postfit_prims.v
 vvp postfit.vvp | tail -2
+# the CPLD must never drive the CPU bus: only BANK0/BANK1/LED_FASTn may be outputs
+python3 ../../../scripts/dat/check_pins.py ../hardware/neo-mem-2048k-dat.kicad_pcb . \
+    | tee ../docs/pin-check.txt | tail -1
+grep -q "CHECK PASSED" ../docs/pin-check.txt || { echo "PIN CHECK FAILED"; exit 1; }
 echo "dat2m_top.jed ready"
