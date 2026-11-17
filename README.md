@@ -230,7 +230,7 @@ silkscreen triangle. Ordering all boards together shares shipping.
 |---|---|---|---|
 | U2 | TI SN74AHCT86PWR | C471866 | Nexperia 74AHCT86PW (C554719), or any 5 V TTL-input '86 in TSSOP-14 (AHCT, VHCT, ACT). Not HCT: too slow for the /RAS clock path. |
 | U3, U4 | Toshiba 74VHCT574AFT(BE) | C7421311 | Nexperia 74AHCT574PW (C282328), Toshiba 74VHCT574AFT (C2677834), any ACT574 in TSSOP-20; HCT574 as a last resort (slower, less margin) |
-| U1 (512K) | CY62146ESL-45ZSXI | C2953196 | CY62146ELL. Not the CY62146EV30 (3 V only). |
+| U1 (512K) | CY62146ESL-45ZSXIT (reel) | C2953196 | CY62146ESL-45ZSXI (the same chip on a tray, e.g. from DigiKey or Mouser), or the dearer CY62146ELL. Not the CY62146EV30 (3 V only). |
 | U1 (2048K) | CY62167ELL-45ZXI | C2950509 | Not the CY62167EV30 (3 V only). |
 
 **Never** use HC (CMOS-level inputs), LV or LVC (3.3 V) logic.
